@@ -29,8 +29,8 @@ contributing to this journal, please use these names when creating new files or 
 
 This journal lints the markdown files with [markdownlint](https://github.com/markdownlint/markdownlint). To make
 contributing easier for you, I've added some useful git hooks under the `hooks` directory. To utilize them simply copy
-or link them into the `.git/hooks` directory:
+them into the `.git/hooks` directory:
 
 ```shell
-ln --symbolic hooks/* .git/hooks
+cp --verbose hooks/* .git/hooks
 ```

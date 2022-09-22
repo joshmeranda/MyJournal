@@ -21,9 +21,11 @@ find_proj_root() {
 root="$(find_proj_root)"
 style_file="$root/style.rb"
 
-errors="$(find "$root" -name '*.md' -exec mdl --style "$style_file" '{}' +)"
+# we only want to scan staged files
+md_files="$(git diff-index --cached --name-only HEAD | grep ".*\.md")"
+errors="$(mdl --style "$style_file" $md_files)"
 
 if [ -n "$errors" ]; then
-    echo "$errors"
+  echo "$errors"
   exit 2
 fi
