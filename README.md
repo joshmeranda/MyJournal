@@ -1,4 +1,5 @@
 # Welcome to my Journal
+
 This is intended to be a place where I can document things that I learn. Everyone is more than welcome to read and use
 everything this journal contains. Just be aware that I am not responsible for any damage any script may cause son your
 system.
@@ -11,9 +12,10 @@ Note that this is not intended to be a 100% up-to-date reference on every topic 
 find with care
 
 ## Format
+
 Alongside this README you should find directories containing at least a `README.md`, but no other files or directories
-are required. See below for a list of standard file and directory names inside each topic directory. If you are contributing to this journal, please
-use these names when creating new files or directories:
+are required. See below for a list of standard file and directory names inside each topic directory. If you are
+contributing to this journal, please use these names when creating new files or directories:
 
 | type | name      | purpose                                                                                                                                                                |
 |------|-----------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -22,3 +24,13 @@ use these names when creating new files or directories:
 | d    | tools     | a collection of scripts or programs which are related to the topic                                                                                                     |
 | d    | examples  | a collection of examples of the topic                                                                                                                                  |
 | d    | images    | a collection of examples of images related to the topic or used in any markdown files                                                                                  |
+
+## Linting
+
+This journal lints the markdown files with [markdownlint](https://github.com/markdownlint/markdownlint). To make
+contributing easier for you, I've added some useful git hooks under the `hooks` directory. To utilize them simply copy
+or link them into the `.git/hooks` directory:
+
+```shell
+ln --symbolic hooks/* .git/hooks
+```

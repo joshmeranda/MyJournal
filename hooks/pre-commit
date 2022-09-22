@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+
+find_proj_root() {
+  dir="$(pwd)"
+
+  while :; do
+    if [ -d "$dir/.git" ]; then
+      echo "$dir"
+      break
+    fi
+
+    if [ "$dir" = "/" ]; then
+      echo "could not find project root"
+      exit 1
+    fi
+
+    dir="$(dirname "$dir")"
+  done
+}
+
+root="$(find_proj_root)"
+style_file="$root/style.rb"
+
+errors="$(find "$root" -name '*.md' -exec mdl --style "$style_file" '{}' +)"
+
+if [ -n "$errors" ]; then
+    echo "$errors"
+  exit 2
+fi
