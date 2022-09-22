@@ -23,6 +23,11 @@ style_file="$root/style.rb"
 
 # we only want to scan staged files
 md_files="$(git diff-index --cached --name-only HEAD | grep ".*\.md")"
+
+if [ -z "$md_files" ]; then
+  exit
+fi
+
 errors="$(mdl --style "$style_file" $md_files)"
 
 if [ -n "$errors" ]; then
