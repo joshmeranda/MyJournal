@@ -36,5 +36,6 @@ cp --verbose hooks/* .git/hooks
 ```
 
 ## Tools
+
 Under the `tools` directory you wil find some general purpose scripts intended to be used by other scripts in this
 journal (ie `tools/logger.sh` is used by `harvester/tools/reset-harvester.bash`)
