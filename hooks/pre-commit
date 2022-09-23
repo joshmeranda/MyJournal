@@ -1,5 +1,24 @@
 #!/usr/bin/env sh
 
+get_files() {
+  files=
+  unstaged="$(git diff --name-only)"
+
+  for filename in $(git diff --name-only --staged); do
+    if echo "$filename" | grep --quiet ".*\.md"; then
+      if ! echo "$unstaged" | grep --quiet "$filename"; then
+        files="$files $filename"
+      else
+        echo "there are unstaged changes to file '$filename', please stash or reset those changes" >&2
+        exit 3
+      fi
+    fi
+
+  done
+
+  echo "$files"
+}
+
 find_proj_root() {
   dir="$(pwd)"
 
@@ -22,7 +41,12 @@ root="$(find_proj_root)"
 style_file="$root/style.rb"
 
 # we only want to scan staged files
-md_files="$(git diff-index --cached --name-only HEAD | grep ".*\.md")"
+md_files="$(get_files)"
+status_code=$?
+
+if [ "$status_code" -ne 0 ]; then
+  exit "$status_code"
+fi
 
 if [ -z "$md_files" ]; then
   exit
