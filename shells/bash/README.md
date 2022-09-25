@@ -11,7 +11,7 @@
 > While the GNU operating system provides other shells, including a version of csh, Bash is the default shell. Like
 > other GNU software, Bash is quite portable. It currently runs on nearly every version of Unix and a few other
 > operating systems - independently-supported ports exist for MS-DOS, OS/2, and Windows platforms.
- 
+
 See [.bashrc](/shells/bash/.bashrc) for the `.bashrc` file that I use as a base for new systems.
 
 ## Documentation
@@ -20,7 +20,6 @@ See [.bashrc](/shells/bash/.bashrc) for the `.bashrc` file that I use as a base 
 |-------------------------|-----------------------------------------------------------------------|
 | Bash Reference Manual   | https://www.gnu.org/software/bash/manual/bash.html                    |
 | Bash Special Parameters | https://www.gnu.org/software/bash/manual/bash.html#Special-Parameters |
-
 
 ## Bashrc vs Profile
 

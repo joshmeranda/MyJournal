@@ -1,10 +1,9 @@
 # Fish
 
 > This is the documentation for fish, the friendly interactive shell.
-> 
+>
 > A shell is a program that helps you operate your computer by starting other programs. fish offers a command-line
 > interface focused on usability and interactive use.
-
 
 See [config.fish](/shells/fish/config.fish) for the `fish.config` file that I use as a base for new systems.
 
@@ -14,7 +13,7 @@ See [config.fish](/shells/fish/config.fish) for the `fish.config` file that I us
 |--------------------|-----------------------------------------------|
 | documentation root | https://fishshell.com/docs/current/index.html |
 
-## Why Do I Like Fish?
+## Why I Like Fish
 
 The [Fish syntax](https://fishshell.com/docs/current/language.html) looks and feels very different from POSIX, and Fish
 scripts will not be cross-compatible with other shells. So why use it?
@@ -30,7 +29,7 @@ Fish's autosuggestions are quite nice. As you start typing a command, the sugges
 show you what Fish thinks you might be typing. These suggestions go so far as to take the current working directory
 (cwd), as well as the status of file paths into account when generating the suggestions.
 
-For more info, see here: https://fishshell.com/docs/current/interactive.html#autosuggestions
+For more info, see here: <https://fishshell.com/docs/current/interactive.html#autosuggestions>
 
 ### Tab Completions
 
@@ -38,7 +37,7 @@ While tab completions are expected to be a part of most shells, I find Fish's to
 complete commands, variables, usernames, and filenames. But it also handles some more specific completions for commands
 like `man` or `make`. You can also [write your own completions](https://fishshell.com/docs/current/completions.html#completion-own).
 
-For more info see here: https://fishshell.com/docs/current/interactive.html#tab-completion
+For more info see here: <https://fishshell.com/docs/current/interactive.html#tab-completion>
 
 ### Private Mode
 
@@ -48,7 +47,7 @@ history. According to the docs:
 > This both hides old history and prevents writing history to disk. This is useful to avoid leaking personal information
 > (e.g. for screencasts) or when dealing with sensitive information.
 
-For more info see here: https://fishshell.com/docs/current/interactive.html#private-mode
+For more info see here: <https://fishshell.com/docs/current/interactive.html#private-mode>
 
 ### `fish_config`
 
@@ -60,11 +59,11 @@ I like this because it makes configuring some aspects of Fish very easy, and is 
 provide control over more aspects of Fish like variables, functions, etc. As it stands using `fish_config` is more of a
 config viewer than an editor.
 
-For more info see here: https://fishshell.com/docs/current/cmds/fish_config.html#cmd-fish-config
+For more info see here: <https://fishshell.com/docs/current/cmds/fish_config.html#cmd-fish-config>
 
 ## Adding to PATH
 
-In older versions you'd have to set the `fish_user_paths` variable to add to the `PATH`: 
+In older versions you'd have to set the `fish_user_paths` variable to add to the `PATH`:
 
 ```fish
 set -Ua fish_user_paths /path
@@ -103,4 +102,4 @@ function __fish_command_not_found_handler --on-event fish_command_not_found
 end
 ```
 
-For more info see here: https://fishshell.com/docs/current/cmds/fish_command_not_found.html
+For more info see here: <https://fishshell.com/docs/current/cmds/fish_command_not_found.html>

@@ -38,8 +38,8 @@ Or more simply as from the [fish docs](https://fishshell.com/docs/current/index.
 
 The shells I like to use and will provide configuration templates for are:
 
- - [bash](/shells/bash)
- - [fish](/shells/fish)
+- [bash](/shells/bash)
+- [fish](/shells/fish)
 
 ## Builtin vs Command
 
@@ -49,7 +49,7 @@ if `cd` was implemented in this way.
 
 Of course this would not work. `cd` modifies the current working directory (cwd) of the current process and any child
 process you create in the future, but most importantly, not the cwd of the parent process. This means that if `cd` was
-run in the same way that `ls` was, it would be impossible (by normal means anyway) to actual "change directories". This 
+run in the same way that `ls` was, it would be impossible (by normal means anyway) to actual "change directories". This
 means that `cd` must be run in the shell's process.
 
 This is where builtins come in. Because `cd` is a builtin it, it is never passed to the kernel and is instead run as
