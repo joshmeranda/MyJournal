@@ -35,6 +35,20 @@ them into the `.git/hooks` directory:
 cp --verbose hooks/* .git/hooks
 ```
 
+You can also manually run your markdown files through the linter:
+
+```shell
+# link this README file
+mdl --style style.rb README.md
+
+# run all markdown files through the linter
+find . -name '*.md' -exec mdl --style style.rb '{}' +
+```
+
+Note that installing the `mdl` too using `gem` as described in [markdownlint's installation instructions](https://github.com/markdownlint/markdownlint#installation)
+resulted in a binary named `mdl.ruby2.5` rather than the expected `mdl`. For this project's [hooks](/hooks) to work you
+will need to create a symlink to `mdl.ruby2.5` called `mdl` somewhere  on your `PATH`.
+
 ## Tools
 
 Under the `tools` directory you wil find some general purpose scripts intended to be used by other scripts in this
