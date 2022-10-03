@@ -1,3 +1,21 @@
+# There are 3 different types of shells in bash: the login shell, normal shell
+# and interactive shell. Login shells read ~/.profile and interactive shells
+# read ~/.bashrc; in our setup, /etc/profile sources ~/.bashrc - thus all
+# settings made here will also take effect in a login shell.
+#
+# NOTE: It is recommended to make language settings in ~/.profile rather than
+# here, since multilingual X sessions would not work properly if LANG is over-
+# ridden in every subshell.
+
+# Some applications read the EDITOR variable to determine your favourite text
+# editor. So uncomment the line below and enter the editor of your choice :-)
+#export EDITOR=/usr/bin/vim
+#export EDITOR=/usr/bin/mcedit
+
+if which nano &> /dev/null; then
+    export EDITOR=/usr/bin/nano
+fi
+
 export GOPATH=/home/josh/GolandProjects
 export PATH=$PATH:/usr/sbin:$HOME/.local/bin:$HOME/.cargo/bin:$GOPATH/bin
 
@@ -15,7 +33,7 @@ foff()
 # keep running a command until it succeeds
 wait_for()
 {
-  while not eval $* 2> /dev/null; sleep 1; echo -n '.'; done
+  while not eval $* 2> /dev/null; do sleep 1; echo -n '.'; done
 }
 
 alias wf=wait_for
