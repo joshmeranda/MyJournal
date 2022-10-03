@@ -9,7 +9,7 @@ test_image=joshmeranda/journaltest:latest
 
 #all_targets="$(find "$test_dir" -maxdepth 1 -executable -type f -name 'test_*.sh' \
 all_targets="$(find "$test_dir" -maxdepth 1 -type f -name 'test_*.sh' \
-              | cut --delimiter _ --field 2 \
+              | cut --delimiter _ --field 2- \
               | cut --delimiter . --field 1)"
 
 usage="Usage: $(basename $0) [-h --help] [targets...]
@@ -85,5 +85,6 @@ else
   IFS=:
   for target in $targets; do
     log_info "running test(s) for target '$target'"
+    "$test_dir/shunit2" "$test_dir/test_$target.sh"
   done
 fi

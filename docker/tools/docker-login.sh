@@ -16,7 +16,7 @@ token_dir="$HOME/.local/docker-login"
 # assert_file ensures that $1 is a file, and exits if not
 assert_file() {
     if [ ! -e "$1" ]; then
-        echo "could not find token file for user '$(cut -d . -f 1 <<< "$1")'"
+        echo "could not find token file for user '$(echo "$1" | cut -d . -f 1)'"
         exit 2
     elif [ -d "$1" ]; then
         echo "file '$1' is a directory"
@@ -70,7 +70,7 @@ command_login() {
 
     local token="$(base64 --decode "$user_file")"
 
-    if ! docker login --password-stdin --username "$username" <<< "$token"; then
+    if ! echo "$token" | docker login --password-stdin --username "$username"; then
         exit 2
     fi
 }

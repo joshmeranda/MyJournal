@@ -3,7 +3,6 @@ test_image=joshmeranda/journaltest:latest
 
 journal_dir="$(realpath ../../)"
 tools_dir="$journal_dir/tools"
-test_dir="$journal_dir/tools/test"
 
 original_dir="$(pwd)"
 
