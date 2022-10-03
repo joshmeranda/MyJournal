@@ -75,3 +75,6 @@ while True:
 
 In the code above you should see that `cd` and `exit` are builtins because their side effects / output is produced by
 the shell directly, rather than passing the command to the kernel (or in this case `sh` for simplicity).
+
+Note: the common builtins `true` and `false` are also a good use case since creating a new process just to get a
+constant that is likely to be used commonly would be wasteful.
