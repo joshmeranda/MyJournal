@@ -1,4 +1,4 @@
-# Welcome to my Journal
+# Welcome to MyJournal
 
 This is intended to be a place where I can document things that I learn. Everyone is more than welcome to read and use
 everything this journal contains. Just be aware that I am not responsible for any damage any script may cause son your
@@ -53,3 +53,14 @@ will need to create a symlink to `mdl.ruby2.5` called `mdl` somewhere  on your `
 
 Under the `tools` directory you wil find some general purpose scripts intended to be used by other scripts in this
 journal (ie `tools/logger.sh` is used by `harvester/tools/reset-harvester.bash`)
+
+### Testing
+
+For scripts that can be tested on most systems without any additional software test scripts will be provided. All
+scripts should be run using `tools/test/test.sh` as an entrypoint by specifying intended script targets. Targets can be
+added by creating a new file under `tools/test/` following the pattern `test_<target_name>.sh`. So if I wanted to test
+a script called `do-something`, I would create a test script called `tools/test/test_do_something.sh`. The test script
+names don't need to strictly follow the snake case (other than the first `_` after `test`) but they should for
+consistency.
+
+To run tests you can run `tools/test/test.sh`.

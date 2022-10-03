@@ -1,11 +1,10 @@
 #!/usr/bin/env sh
 test_image=joshmeranda/journaltest:latest
 
-journal_dir="$(realpath ../../)"
-tools_dir="$journal_dir/tools"
+. "$(dirname "$0")/config"
 
+config_sh="$journal_dir/tools/config.sh"
 original_dir="$(pwd)"
-
 archive="$journal_dir/myjournal.tar.gz"
 
 # check the hash of a host file against the has of a file on a container
@@ -49,7 +48,7 @@ tearDownOnce()
 # tests
 test_config_package_all()
 {
-  "$tools_dir/config.sh" with-all > /dev/null 2>&1
+  "$config_sh" with-all > /dev/null 2>&1
 
   archived_files="$(tar --list --file "$archive")"
 
@@ -70,7 +69,7 @@ test_config_package_all()
 
 test_config_package_with_only_bash_fish()
 {
-  "$tools_dir/config.sh" with-fish with-bash > /dev/null 2>&1
+  "$config_sh" with-fish with-bash > /dev/null 2>&1
 
   archived_files="$(tar --list --file "$archive")"
 
@@ -92,7 +91,7 @@ test_config_package_with_only_bash_fish()
 
 test_config_install()
 {
-  "$tools_dir/config.sh" with-all > /dev/null 2>&1
+  "$config_sh" with-all > /dev/null 2>&1
 
   container_id=$(docker run --detach --mount type=bind,source="$archive",target=/myjournal.tar.gz "$test_image")
 
@@ -124,7 +123,7 @@ test_config_install()
 
 test_config_install_overwrite()
 {
-  "$tools_dir/config.sh" with-bash with-fish > /dev/null 2>&1
+  "$config_sh" with-bash with-fish > /dev/null 2>&1
 
   container_id=$(docker run --detach --mount type=bind,source="$archive",target=/myjournal.tar.gz "$test_image")
 
@@ -147,7 +146,7 @@ test_config_install_overwrite()
 
 test_config_install_no_overwrite()
 {
-  "$tools_dir/config.sh" with-bash with-fish > /dev/null 2>&1
+  "$config_sh" with-bash with-fish > /dev/null 2>&1
 
   container_id=$(docker run --detach --mount type=bind,source="$archive",target=/myjournal.tar.gz "$test_image")
 

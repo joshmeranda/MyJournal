@@ -1,2 +1,4 @@
+journal_dir="$(git rev-parse --show-toplevel)"
+
 shunit_version=2.1.8
 shunit_url="https://github.com/kward/shunit2/archive/refs/tags/v$shunit_version.tar.gz"

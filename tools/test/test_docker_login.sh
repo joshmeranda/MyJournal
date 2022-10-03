@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
 test_image=joshmeranda/journaltest:latest
 
-journal_dir="$(realpath ../../)"
+. "$(dirname "$0")/config"
+
 docker_login="$journal_dir/docker/tools/docker-login.sh"
 
 test_docker_login()
