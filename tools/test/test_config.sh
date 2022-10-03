@@ -141,6 +141,9 @@ test_config_install_overwrite()
   assert_hashes "$container_id" "$journal_dir/shells/fish/config/config.fish" /root/.config/fish/config.fish
 
   assertEquals 'echo another hello world' "$(docker exec "$container_id" cat /root/.config/fish/another_config.fish)"
+
+  docker container stop "$container_id" > /dev/null 2>&1
+  docker container rm "$container_id" > /dev/null 2>&1
 }
 
 test_config_install_no_overwrite()
@@ -161,4 +164,7 @@ test_config_install_no_overwrite()
   assert_not_hashes "$container_id" "$journal_dir/shells/fish/config/config.fish" /root/.config/fish/config.fish
 
   assertEquals 'echo another hello world' "$(docker exec "$container_id" cat /root/.config/fish/another_config.fish)"
+
+  docker container stop "$container_id" > /dev/null 2>&1
+  docker container rm "$container_id" > /dev/null 2>&1
 }
