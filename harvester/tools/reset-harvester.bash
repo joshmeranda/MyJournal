@@ -7,10 +7,10 @@ if [ "$(id -u )" -ne 0 ]; then
     exit 1
 fi
 
-source "$(dirname $0)/teardown-harvester.bash"
+"$(dirname $0)/teardown-harvester.bash"
 
 log_info "launching harvester"
-source "$(dirname $0)/launch-harvester.bash"
+"$(dirname $0)/launch-harvester.bash"
 
 hosts_file="/home/jmeranda/.ssh/known_hosts"
 log_info "removing 192.168.1.30 from '$hosts_file'"
