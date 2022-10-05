@@ -65,6 +65,7 @@ test_config_package_all()
   assertContains "$archived_files" tools/run-script.bash
   assertContains "$archived_files" tools/setup-scripts/harv.bash
   assertContains "$archived_files" tools/teardown-harvester.bash
+  assertContains "$archived_files" tools/install_fish.sh
 }
 
 test_config_package_with_only_bash_fish()
@@ -77,6 +78,7 @@ test_config_package_with_only_bash_fish()
   assertContains "$archived_files" config.fish
   assertContains "$archived_files" config.json
   assertContains "$archived_files" install.sh
+  assertContains "$archived_files" tools/install_fish.sh
 
   assertNotContains "$archived_files" tools/docker-login.sh
   assertNotContains "$archived_files" tools/cp-harv-iso.bash
@@ -116,6 +118,7 @@ test_config_install()
 
   # other tools
   assert_hashes "$container_id" "$journal_dir/tools/logger.sh" /root/tools/logger.sh
+  assert_hashes "$container_id" "$journal_dir/shells/fish/tools/install_fish.sh" /root/tools/install_fish.sh
 
   docker container stop "$container_id" > /dev/null 2>&1
   docker container rm "$container_id" > /dev/null 2>&1
@@ -137,6 +140,7 @@ test_config_install_overwrite()
   # shell configurations
   assert_hashes "$container_id" "$journal_dir/shells/bash/config/.bashrc" /root/.bashrc
   assert_hashes "$container_id" "$journal_dir/shells/fish/config/config.fish" /root/.config/fish/config.fish
+  assert_hashes "$container_id" "$journal_dir/shells/fish/tools/install_fish.sh" /root/tools/install_fish.sh
 
   assertEquals 'echo another hello world' "$(docker exec "$container_id" cat /root/.config/fish/another_config.fish)"
 
@@ -160,6 +164,7 @@ test_config_install_no_overwrite()
   # shell configurations
   assert_not_hashes "$container_id" "$journal_dir/shells/bash/config/.bashrc" /root/.bashrc
   assert_not_hashes "$container_id" "$journal_dir/shells/fish/config/config.fish" /root/.config/fish/config.fish
+  assert_hashes "$container_id" "$journal_dir/shells/fish/tools/install_fish.sh" /root/tools/install_fish.sh
 
   assertEquals 'echo another hello world' "$(docker exec "$container_id" cat /root/.config/fish/another_config.fish)"
 
