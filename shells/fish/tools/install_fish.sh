@@ -65,6 +65,24 @@ cd "fish-$version" || exit 1
 
 mkdir build && cd build
 
-cmake -D CMAKE_INSTALL_PREFIX="$prefix_dir" -D BUILD_DOCS=OFF ..
-make
-make install
+cmake_log="$build_dir/cmake.log"
+build_log="$build_dir/build.log"
+install_log="$build_dir/install.log"
+
+log_info "running cmake"
+if ! cmake -D CMAKE_INSTALL_PREFIX="$prefix_dir" -D BUILD_DOCS=OFF .. > "$cmake_log" 2>&1; then
+  log_error "error running cmake, you can view related logs in '$cmake_log'"
+  exit 1
+fi
+
+log_info 'building fish'
+if ! make > "$build_log" 2>&1; then
+  log_error "error building fish, you can view related logs in '$build_log'"
+  exit 1
+fi
+
+log_info 'installing fish'
+if ! make install > "$install_log" 2>&1; then
+  log_error "error installing fish, you can view related logs in '$build_log'"
+  exit 1
+fi
