@@ -2,7 +2,7 @@
 
 resources_dir="$(dirname "$0")/resources"
 build_dir="$resources_dir/fish-build"
-prefix_dir=/usr/bin
+prefix_dir=/usr/local/bin
 
 usage="Usage: $(basename "$0") [-h] [-b <build_dir>] [-p <prefix-dir>] <fish_version>
 
@@ -86,3 +86,15 @@ if ! make install > "$install_log" 2>&1; then
   log_error "error installing fish, you can view related logs in '$build_log'"
   exit 1
 fi
+
+if ! grep --quiet "$prefix_dir/fish" /etc/shells; then
+  log_info "shell '$prefix_dir/fish' not found in /etc/shells"
+
+  if [ ! -w /etc/shells ]; then
+    log_error 'ACTION REQUIRED: cannot write to /etc/shells'
+    log_error 'ACTION REQUIRED: for the install to take effect, you must add '$prefix_dir/fish' to /etc/shells'
+    exit 1
+  fi
+fi
+
+log_info 'install successful! dont'\''t forget to change you shell with chsh'
