@@ -9,9 +9,10 @@ See [config.fish](/shells/fish/config.fish) for the `fish.config` file that I us
 
 ## Documentation
 
-| description        | link                                          |
-|--------------------|-----------------------------------------------|
-| documentation root | https://fishshell.com/docs/current/index.html |
+| description        | link                                                          |
+|--------------------|---------------------------------------------------------------|
+| documentation root | https://fishshell.com/docs/current/index.html                 |
+| uninstalling fish  | https://fishshell.com/docs/current/faq.html#uninstalling-fish |
 
 ## Why I Like Fish
 
@@ -103,3 +104,8 @@ end
 ```
 
 For more info see here: <https://fishshell.com/docs/current/cmds/fish_command_not_found.html>
+
+## Uninstalling Fish
+
+If you build and in stall fish from source, it is more difficult but still possible to uninstall. Fish provides these
+steps at <https://fishshell.com/docs/current/faq.html#uninstalling-fish>.
