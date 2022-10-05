@@ -9,7 +9,8 @@ resource_dir="$(dirname "$0")/resources"
 usage="Usage: $(basename "$0") [-f config ] [-h] [opts...]
 
 args:
-  config          the path to a file pairing configuration target to an installation directory
+  config                the path to a file pairing configuration target to an
+                        installation directory
 
 opts:
   with-all              include all scripts and configurations
@@ -19,6 +20,11 @@ opts:
   with-harvester        include harvester scripts / configurations
   with-fish             include fish scripts / configurations
   with-tools            include tools scripts / configurations
+
+if a opt includes tools of its own, they will be included and installed as any
+of the tools would be. For example, if with-docker is enabled, after the
+configuration archive is applied, the docker_login.bash script will be created
+at $HOME/tools
 "
 
 temp_dir="$(mktemp --directory)"
@@ -82,6 +88,7 @@ package_fish()
 {
   log_info "packaging fish"
   cp shells/fish/config/config.fish "$config_dir"
+  cp shells/fish/tools/install_fish.sh "$tools_dir"
 
   register_cfg config.fish '$HOME/.config/fish/config.fish'
 }
@@ -89,8 +96,6 @@ package_fish()
 package_tools()
 {
   log_info "packaging tools"
-
-  mkdir --parents "$tools_dir"
 
   cp tools/logger.sh "$tools_dir"
 
@@ -116,7 +121,15 @@ package_targets()
   if $with_all || $with_harvester; then package_harvester; else log_info skipping harvester; fi
   if $with_all || $with_fish; then package_fish; else log_info skipping fish; fi
 
-  if $with_all || $with_tools; then package_tools; else log_info skipping tools; fi
+  if $with_all || $with_tools; then
+    package_tools
+  else
+    log_info skipping tools
+
+    if [ -d "$tools_dir" ]; then
+      register_cfg tools '$HOME/tools'
+    fi
+  fi
 
   tar_file="myjournal.tar.gz"
 

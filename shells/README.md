@@ -78,3 +78,6 @@ the shell directly, rather than passing the command to the kernel (or in this ca
 
 Note: the common builtins `true` and `false` are also a good use case since creating a new process just to get a
 constant that is likely to be used commonly would be wasteful.
+
+## The Importance of /etc/shells
+
