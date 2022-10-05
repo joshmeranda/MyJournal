@@ -2,7 +2,9 @@
 
 resources_dir="$(dirname "$0")/resources"
 build_dir="$resources_dir/fish-build"
-prefix_dir=/usr/local/bin
+prefix_dir=/usr/local
+
+. "$(dirname "$0")/logger.sh"
 
 usage="Usage: $(basename "$0") [-h] [-b <build_dir>] [-p <prefix-dir>] <fish_version>
 
@@ -43,6 +45,8 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 
+log_info "installing fish $version"
+
 if ! which cmake > /dev/null 2>&1; then
   log_error fish requires cmake for build, but it could not be found
   exit 2
@@ -52,9 +56,12 @@ mkdir --parents "$build_dir"
 
 if [ ! -e "$build_dir/fish-$version.tar.xz" ]; then
   fish_url="https://github.com/fish-shell/fish-shell/releases/download/$version/fish-$version.tar.xz"
+
   if ! wget --quiet --directory-prefix "$build_dir" "$fish_url"; then
     log_error "could not pull archive from '$fish_url'"
     exit 2
+  else
+    log_info "fetched fish source from '$fish_url'"
   fi
 fi
 
@@ -87,14 +94,17 @@ if ! make install > "$install_log" 2>&1; then
   exit 1
 fi
 
-if ! grep --quiet "$prefix_dir/fish" /etc/shells; then
-  log_info "shell '$prefix_dir/fish' not found in /etc/shells"
+fish_bin="$prefix_dir/bin/fish"
+if ! grep --quiet "$fish_bin" /etc/shells; then
+  log_info "shell '$fish_bin' not found in /etc/shells"
 
   if [ ! -w /etc/shells ]; then
     log_error 'ACTION REQUIRED: cannot write to /etc/shells'
-    log_error 'ACTION REQUIRED: for the install to take effect, you must add '$prefix_dir/fish' to /etc/shells'
-    exit 1
+    log_error 'ACTION REQUIRED: for the install to take effect, you must add '$fish_bin' to /etc/shells'
+    exit
+  else
+    echo "$fish_bin" >> /etc/shells
   fi
 fi
 
-log_info 'install successful! dont'\''t forget to change you shell with chsh'
+log_info 'install successful! don'\''t forget to change you shell with chsh'

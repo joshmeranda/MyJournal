@@ -3,7 +3,7 @@ test_image=joshmeranda/journaltest:latest
 
 . "$(dirname "$0")/config"
 
-config_sh="$journal_dir/tools/config.sh"
+config_sh="$journal_tools_dir/config.sh"
 original_dir="$(pwd)"
 archive="$journal_dir/myjournal.tar.gz"
 
@@ -13,8 +13,8 @@ archive="$journal_dir/myjournal.tar.gz"
 # $3: container file path
 assert_hashes()
 {
-  assertEquals \
-    "$(md5sum "$2" | cut --delimiter ' ' --fields 1)" \
+  assertEquals "hashes for '$(basename "$2")' are !=" \
+    "$(md5sum "$2" | cut --delimiter ' ' --fields 1)"   \
     "$(docker exec "$1" md5sum "$3" | cut --delimiter ' ' --fields 1)"
 }
 
@@ -24,8 +24,8 @@ assert_hashes()
 # $3: container file path
 assert_not_hashes()
 {
-  assertNotEquals \
-    "$(md5sum "$2" | cut --delimiter ' ' --fields 1)" \
+  assertNotEquals "hashes for '$(basename "$2")' are ==" \
+    "$(md5sum "$2" | cut --delimiter ' ' --fields 1)"    \
     "$(docker exec "$1" md5sum "$3" | cut --delimiter ' ' --fields 1)"
 }
 
@@ -97,6 +97,7 @@ test_config_install()
 
   container_id=$(docker run --detach --mount type=bind,source="$archive",target=/myjournal.tar.gz "$test_image")
 
+  docker exec "$container_id" rm /root/.bashrc
   docker exec "$container_id" tar --extract --file /myjournal.tar.gz > /dev/null 2>&1
   docker exec "$container_id" /myjournal-config/install.sh > /dev/null 2>&1
 
