@@ -25,6 +25,6 @@ if [ -z "$domains" ]; then
   exit
 fi
 
-log_info "stopping domains: $domains"
+log_info "stopping domains: " $domains
 
 vagrant destroy --force $domains
