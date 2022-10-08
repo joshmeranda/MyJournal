@@ -2,9 +2,10 @@
 
 . "$(dirname "$0")/logger.sh"
 
-usage="Usage: $(basename "$0") [-f] [-s <signal>] <pattern>
+usage="Usage: $(basename "$0") [-hf] [-s <signal>] <pattern>
 
 opts:
+  -h          show this help text
   -f          do not as for confirmation from user before killing processes
   -s          the signal to send to the found processes instead of SIGTERM you
               can get a list of supported signals with 'kill -l'
@@ -20,6 +21,10 @@ force=false
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
+    -h)
+      echo "$usage"
+      exit
+      ;;
     -f)
       force=true
       ;;
