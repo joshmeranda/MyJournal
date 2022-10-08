@@ -54,7 +54,7 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 
-processes="$(pgrep --list-full "$pattern")"
+processes="$(pgrep --full --list-full "$pattern")"
 
 if [ -z "$processes" ]; then
   echo 'Error: no processes found, there is nothing to do'
