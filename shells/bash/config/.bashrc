@@ -24,12 +24,6 @@ alias clr='clear'
 alias cls='clear;ls'
 alias sudoi='sudo -i'
 
-# kill a process by name, very useful for programs that just won't quit (I'm looking at you steam)
-foff()
-{
-  kill -9 $(pgrep -f "$@")
-}
-
 # keep running a command until it succeeds
 wait_for()
 {

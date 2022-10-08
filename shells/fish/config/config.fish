@@ -12,11 +12,6 @@ if status is-interactive
     alias sudoi='sudo -i'
 fi
 
-# kill a process by name, very useful for programs that just won't quit (I'm looking at you steam)
-function foff
-    kill -9 (pgrep -f "$argv")
-end
-
 # keep running a command until it succeeds
 function wait_for
     while not eval $argv 2> /dev/null ; sleep 1; echo -n '.'; end;
