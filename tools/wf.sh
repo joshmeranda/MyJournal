@@ -7,7 +7,7 @@ opts:
   -i           the interval between attempts [1]
   -q           show no output at failed attempt, but still show the output for
                the last attempt
-  -s           show no output at all
+  -s           show no output at all (overrides -q)
 "
 
 if [ "$#" -eq 0 ]; then
@@ -61,13 +61,14 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 
+if $silent && $quiet; then
+  quiet=false
+fi
+
 cmd_out="$(mktemp --suffix .wf)"
 attempts=0
 
 while ! $args > "$cmd_out" 2>&1 && { [ "$max_attempts" = -1 ] || [ "$attempts" -lt "$max_attempts" ]; }; do
-  cat "$cmd_out"
-  echo
-
   attempts=$((attempts + 1))
 
   if ! $silent && ! $quiet; then
@@ -77,11 +78,16 @@ while ! $args > "$cmd_out" 2>&1 && { [ "$max_attempts" = -1 ] || [ "$attempts" -
   sleep "$interval"
 done
 
-if ! $silent; then
-  if ! $quiet; then
-    echo
+if ! $silent && ! $quiet; then
+  if [ "$attempts" -eq "$max_attempts" ]; then
+    echo err
+  else
+    echo ok
   fi
+fi
 
+
+if ! $silent; then
   cat "$cmd_out"
 fi
 
