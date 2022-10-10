@@ -10,7 +10,7 @@ if status is-interactive
     alias clr='clear'
     alias cls='clear;ls'
     alias sudoi='sudo -i'
-fi
+end
 
 # Fish takes a long time to go through additional test and business logic
 # before it tells us it can't find the given command. Instead we just want to
@@ -23,4 +23,3 @@ end
 # function __fish_command_not_found_handler --on-event fish_command_not_found
 #      fish_command_not_found $argv
 # end
-
