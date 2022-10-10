@@ -1,5 +1,6 @@
 journal_dir="$(git rev-parse --show-toplevel)"
 journal_tools_dir="$journal_dir/tools"
+journal_test_resource_dir="$journal_tools_dir/test/resources"
 
 shunit_version=2.1.8
 shunit_url="https://github.com/kward/shunit2/archive/refs/tags/v$shunit_version.tar.gz"
