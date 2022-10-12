@@ -53,14 +53,20 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 
-log_info "installing fish $version"
+if [ -z "$version" ]; then
+  echo 'expected a version but found none'
+  echo "$usage"
+  exit 1
+fi
+
+log_info "installing fish '$version'"
 
 if ! which cmake > /dev/null 2>&1; then
   log_error fish requires cmake for build, but it could not be found
   exit 2
 fi
 
-mkdir --parents "$build_dir"
+mkdir --parents "$build_dir" || exit 1
 
 if [ ! -e "$build_dir/fish-$version.tar.xz" ]; then
   fish_url="https://github.com/fish-shell/fish-shell/releases/download/$version/fish-$version.tar.xz"
@@ -78,7 +84,7 @@ cd "$build_dir" || exit 1
 tar --extract --file "fish-$version.tar.xz"
 cd "fish-$version" || exit 1
 
-mkdir build && cd build
+mkdir --parents build && cd build
 
 cmake_log="$build_dir/cmake.log"
 build_log="$build_dir/build.log"
