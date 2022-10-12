@@ -6,12 +6,13 @@ prefix_dir=/usr/local
 
 . "$(dirname "$0")/logger.sh"
 
-usage="Usage: $(basename "$0") [-h] [-b <build_dir>] [-p <prefix-dir>] <fish_version>
+usage="Usage: $(basename "$0") [-lh] [-b <build_dir>] [-p <prefix-dir>] <fish_version>
 
 args:
   -h     display this help text
   -b     the directory to use for all build and installation files <$build_dir>
   -p     the directory to install fish into <$prefix_dir>
+  -l     list the available release versions
 "
 
 if [ "$#" -lt 1 ]; then
@@ -32,6 +33,13 @@ while [ "$#" -gt 0 ]; do
     -p)
       prefix_dir="$2"
       shift
+      ;;
+    -l)
+      release_url=https://api.github.com/repos/fish-shell/fish-shell/releases
+
+      log_info "fetching release list from ' $release_url'"
+      curl --silent "$release_url" | jq '.[].tag_name' | tr --delete '"'
+      exit
       ;;
     *)
       if [ -z "$fish_version" ]; then
