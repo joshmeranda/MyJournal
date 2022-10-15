@@ -66,6 +66,7 @@ test_config_package_all()
   assertContains "$archived_files" tools/setup-scripts/harv.bash
   assertContains "$archived_files" tools/teardown-harvester.bash
   assertContains "$archived_files" tools/install_fish.sh
+  assertContains "$archived_files" tools/install_kubectl.sh
 }
 
 test_config_package_with_only_bash_fish()
@@ -89,6 +90,7 @@ test_config_package_with_only_bash_fish()
   assertNotContains "$archived_files" tools/run-script.bash
   assertNotContains "$archived_files" tools/setup-scripts/harv.bash
   assertNotContains "$archived_files" tools/teardown-harvester.bash
+  assertNotContains "$archived_files" tools/install_kubectl.sh
 }
 
 test_config_install()
@@ -120,6 +122,7 @@ test_config_install()
   # other tools
   assert_hashes "$container_id" "$journal_dir/tools/logger.sh" /root/tools/logger.sh
   assert_hashes "$container_id" "$journal_dir/shells/fish/tools/install_fish.sh" /root/tools/install_fish.sh
+  assert_hashes "$container_id" "$journal_dir/kubernetes/tools/install_kubectl.sh" /root/tools/install_kubectl.sh
 
   docker container stop "$container_id" > /dev/null 2>&1
   docker container rm "$container_id" > /dev/null 2>&1

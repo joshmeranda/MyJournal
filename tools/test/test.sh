@@ -19,7 +19,7 @@ targets. Run tests on tools in myjournal. To add a new target add a new file
 called 'test_<target_name>.sh' in the same directory as this file.
 
 targets:
-$(echo "$all_targets" | sed 's/^/  /')
+$(echo "$all_targets" | sed 's/^/  /' | sort)
 "
 
 ensure_shunit2()

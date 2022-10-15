@@ -6,7 +6,7 @@ FROM ubuntu:22.10
 #       gcc ncurses
 RUN apt-get update \
       && apt-get upgrade --assume-yes \
-      && apt-get --assume-yes install wget build-essential cmake ncurses-dev libncurses5-dev libpcre2-dev gettext jq
+      && apt-get --assume-yes install wget build-essential cmake ncurses-dev libncurses5-dev libpcre2-dev gettext jq curl
 
 # we just need to keep the container running indefinitely (basically a busy box)
 CMD sleep inf

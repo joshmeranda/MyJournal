@@ -19,6 +19,7 @@ opts:
   with-elasticsearch    include elasticsearch scripts / configurations
   with-harvester        include harvester scripts / configurations
   with-fish             include fish scripts / configurations
+  with-kubernetes       include kubernetes scripts / configurations
   with-tools            include tools scripts / configurations
 
 if a opt includes tools of its own, they will be included and installed as any
@@ -40,6 +41,7 @@ with_docker=false
 with_elasticsearch=false
 with_harvester=false
 with_fish=false
+with_kubernetes=false
 with_tools=false
 
 # add a target ($1) destination ($2) pair to $config_file json configuration if
@@ -86,11 +88,17 @@ package_harvester()
 
 package_fish()
 {
-  log_info "packaging fish"
+  log_info packaging fish
   cp shells/fish/config/config.fish "$config_dir"
   cp shells/fish/tools/install_fish.sh "$tools_dir"
 
   register_cfg config.fish '$HOME/.config/fish/config.fish'
+}
+
+package_kubernetes()
+{
+  log_info packaging kubectl
+  cp --recursive --dereference kubernetes/tools/* "$tools_dir"
 }
 
 package_tools()
@@ -120,6 +128,7 @@ package_targets()
   if $with_all || $with_elasticsearch; then package_elasticsearch; else log_info skipping elasticsearch; fi
   if $with_all || $with_harvester; then package_harvester; else log_info skipping harvester; fi
   if $with_all || $with_fish; then package_fish; else log_info skipping fish; fi
+  if $with_all || $with_kubernetes; then package_kubernetes; else log_info skipping kubernetes; fi
 
   if $with_all || $with_tools; then
     package_tools
