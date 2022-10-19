@@ -1,5 +1,11 @@
 #!/usr/bin/env sh
 
+# todo: it would be nice to have more control over output
+#   dots and output
+#   dots and no output
+#   no dots and output
+#   no dots and no output
+
 usage="Usage: $(basename "$0") [-hq] [-m <max-attempts>] [-i <interval>] <args>...
 
 opts:
