@@ -10,6 +10,7 @@ fails_left="$(cat "$fails_left_file")"
 
 if [ "$fails_left" -gt 0 ]; then
   echo "$(($fails_left - 1))" > "$fails_left_file"
+  echo "$fails_left left"
   exit "$fails_left"
 else
   echo DONE

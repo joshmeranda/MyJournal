@@ -1,13 +1,16 @@
 #!/usr/bin/env sh
 
-usage="Usage: $(basename "$0") [-hq] [-m <max-attempts>] [-i <interval>] <args>...
+usage="Usage: $(basename "$0") [-hq] [-m <max-attempts>] [-i <interval>]
+                                     [-o <never|last|last-err|all>] <args>...
 
 opts:
-  -m           maximum count amount [inf]
-  -i           the interval between attempts [1]
-  -q           show no output at failed attempt, but still show the output for
-               the last attempt
-  -s           show no output at all (overrides -q)
+  -m <max-attempts>     maximum count amount [inf]
+  -i <interval>         the interval between attempts [1]
+  -o <never|last|all>   control whether out output to the given command is
+                        displayed never, only the last attempt, or all attempts
+                        [last]
+  -p                    print a '.' each time the command is tried and whether
+                        the command succeeded or failed on the last attempt
 "
 
 if [ "$#" -eq 0 ]; then
@@ -28,8 +31,8 @@ assert_positive_int()
 
 max_attempts=-1
 interval=1
-quiet=false
-silent=false
+output_level=last
+progress=false
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
@@ -47,11 +50,21 @@ while [ "$#" -gt 0 ]; do
       interval=$2
       shift
       ;;
-    -q)
-      quiet=true
+    -o)
+      output_level="$2"
+
+      case "$output_level" in
+        never|last|last-err|all) ;;
+        *)
+          echo "'$output_level' is not a valid option to '-o'"
+          echo "$usage"
+          ;;
+      esac
+
+      shift
       ;;
-    -s)
-      silent=true
+    -p)
+      progress=true
       ;;
     *)
       args="$*"
@@ -61,24 +74,27 @@ while [ "$#" -gt 0 ]; do
   shift
 done
 
-if $silent && $quiet; then
-  quiet=false
+if [ "$output_level" = never ]; then
+  cmd_out=/dev/null
+else
+  cmd_out="$(mktemp --suffix .wf)"
 fi
 
-cmd_out="$(mktemp --suffix .wf)"
 attempts=0
 
 while ! $args > "$cmd_out" 2>&1 && { [ "$max_attempts" = -1 ] || [ "$attempts" -lt "$max_attempts" ]; }; do
   attempts=$((attempts + 1))
 
-  if ! $silent && ! $quiet; then
+  if [ "$output_level" = always ]; then
+    cat "$cmd_out"
+  elif $progress; then
     printf .
   fi
 
   sleep "$interval"
 done
 
-if ! $silent && ! $quiet; then
+if $progress; then
   if [ "$attempts" -eq "$max_attempts" ]; then
     echo err
   else
@@ -86,8 +102,9 @@ if ! $silent && ! $quiet; then
   fi
 fi
 
-
-if ! $silent; then
+if [ "$output_level" = last ]; then
+  cat "$cmd_out"
+elif [ "$output_level" = last-err ] && [ "$attempts" -eq "$max_attempts" ]; then
   cat "$cmd_out"
 fi
 
