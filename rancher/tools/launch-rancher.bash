@@ -61,7 +61,10 @@ if ! docker run "${docker_flags[@]}" $image 1> /dev/null; then
   exit 2
 fi
 
-"$(dirname "$0")/wf.sh" -s curl localhost
+if ! "$(dirname "$0")/wf.sh" -m 12 -i 5 -p -o last-err curl localhost; then
+  log_error "error waiting for rancher to start"
+  exit 1
+fi
 
 default_password=$(docker logs $cnt_name 2>&1 | grep 'Bootstrap Password: ' | cut -d ' ' -f 6)
 log_info default password: "'$default_password'"
