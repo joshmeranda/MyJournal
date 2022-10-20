@@ -6,7 +6,7 @@ get_files() {
 
   for filename in $(git diff --name-only --staged); do
     if echo "$filename" | grep --quiet ".*\.md"; then
-      if ! echo "$unstaged" | grep --quiet "$filename"; then
+      if ! echo "$unstaged" | grep --line-regexp --quiet "$filename"; then
         files="$files $filename"
       else
         echo "there are unstaged changes to file '$filename', please stash or reset those changes" >&2
