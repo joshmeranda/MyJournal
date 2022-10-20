@@ -94,3 +94,24 @@ ps -e -o pid,comm,cgroup | grep "/docker/305e812abc468e2495a2756398a2cc167f64c64
 You will notice that the output for `ps` is empty. The `sleep` process appears to have been killed along with the parent
 `sh`. So I feel safe and secure in the knowledge that force removing containers is still bad (see the article above) I
 don't have to worry too much about container zombies lingering past their container's lifetime.
+
+## Docker Inspect
+
+Docker was nice enough to make it exceedingly simple to pull information about docker images using their `inspect`
+commands. For example, I often find myself needing to get very specific information about docker containers (like
+getting an ip address), [`docker-container-inspect`](https://docs.docker.com/engine/reference/commandline/container_inspect/)
+allows us to do so.
+
+Docker inspect is powerful because it allows us to view virtually every aspect of a container, and supports filtering
+that information using [Go Templates](https://pkg.go.dev/text/template#section-documentation). Since the command does
+write its output as json, you could use another tool like [`jq`](https://stedolan.github.io/jq/) and not need to learn
+the kinda wonky syntax pf go templates; however, obviously you would be in trouble once you try to inspect a container
+on a system without `jq` installed.
+
+### Examples
+
+#### Container Ip
+
+```shell
+docker continer inspect --format '{{ .NetworkSettings.IPAddress }}' <id>
+```
