@@ -55,7 +55,7 @@ if [ -n "$(docker container ls --quiet --all --filter "name=$cnt_name")" ]; then
   docker container rm "$cnt_name" > /dev/null 2>&1
 fi
 
-log_info starting rancher container
+log_info 'starting rancher container'
 if ! docker run "${docker_flags[@]}" $image 1> /dev/null; then
   log_error could not start container
   exit 2
@@ -70,6 +70,18 @@ default_password=$(docker logs $cnt_name 2>&1 | grep 'Bootstrap Password: ' | cu
 log_info default password: "'$default_password'"
 password_file=rancher_password
 echo "$default_password" > "$password_file"
+
+# todo: we can probably do this kubeconfig stuff while waiting for the container to start
+# get kubeconfig
+rancher_kubeconfig=/etc/rancher/k3s/k3s.yaml
+cp_dst="$HOME/.kube/config.rancher"
+
+log_info "copying rancher kubeconfig '$rancher_kubeconfig' to '$cp_dst'"
+docker cp "$cnt_name:$rancher_kubeconfig" "$cp_dst"
+
+rancher_ip="$(docker container inspect --format '{{ .NetworkSettings.IPAddress }}' "$cnt_name")"
+log_info "pointing new rancher kubeconfig to container ip '$rancher_ip'"
+yq --inplace eval ".clusters[0].cluster.server |= \"$rancher_ip\"" "$cp_dst"
 
 # print informative info
 log_info to access an interactive shell to the rancher image run: docker exec --interactive --tty $cnt_name bash

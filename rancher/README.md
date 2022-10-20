@@ -20,3 +20,13 @@
 | description       | link                                    |
 |-------------------|-----------------------------------------|
 | Rancher docs root | https://docs.ranchermanager.rancher.io/ |
+
+## Environment Variables
+
+Here you'll find a list of rancher environment variables that I've found useful:
+
+| name                 | default                   | description                                                                                                            |
+|----------------------|---------------------------|------------------------------------------------------------------------------------------------------------------------|
+| `IMAGE_REPO`         | rancher                   | the repository to use when pulling images                                                                              |
+| `CATTLE_AGENT_IMAGE` | rancher/rancher-agent:dev | the agent image to instruct the cluster being registered to the rancher server to use (useful when testing dev images) |
+| `SSL_CERT_DIR`       | /etc/kubernetes/ssl/certs | the directory to store and look for ssl certs                                                                          |
