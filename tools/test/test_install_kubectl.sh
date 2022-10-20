@@ -16,7 +16,7 @@ test_install_kubectl()
 
   docker exec "$container_id" /root/tools/install_kubectl.sh -v "$kubectl_version" -d /opt/kubectl -i /usr/bin > /dev/null 2>&1
 
-  if ! docker container exec "$container_id" test -L /usr/bin//kubectl; then
+  if ! docker container exec "$container_id" test -L /usr/bin/kubectl; then
     fail 'expected a symlink at /usr/bin/kubectl'
   fi
 
