@@ -20,6 +20,7 @@ opts:
   with-harvester        include harvester scripts / configurations
   with-fish             include fish scripts / configurations
   with-kubernetes       include kubernetes scripts / configurations
+  with-rancher          include rancher scripts / configurations
   with-tools            include tools scripts / configurations
 
 if a opt includes tools of its own, they will be included and installed as any
@@ -42,6 +43,7 @@ with_elasticsearch=false
 with_harvester=false
 with_fish=false
 with_kubernetes=false
+with_rancher=false
 with_tools=false
 
 # add a target ($1) destination ($2) pair to $config_file json configuration if
@@ -101,6 +103,12 @@ package_kubernetes()
   cp --recursive --dereference kubernetes/tools/* "$tools_dir"
 }
 
+package_rancher()
+{
+  log_info packaging rancher
+  cp --recursive --dereference rancher/tools/* "$tools_dir"
+}
+
 package_tools()
 {
   log_info "packaging tools"
@@ -129,6 +137,7 @@ package_targets()
   if $with_all || $with_harvester; then package_harvester; else log_info skipping harvester; fi
   if $with_all || $with_fish; then package_fish; else log_info skipping fish; fi
   if $with_all || $with_kubernetes; then package_kubernetes; else log_info skipping kubernetes; fi
+  if $with_all || $with_kubernetes; then package_rancher; else log_info skipping rancher; fi
 
   if $with_all || $with_tools; then
     package_tools
