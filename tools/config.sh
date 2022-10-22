@@ -69,23 +69,20 @@ package_bash()
   register_cfg .bashrc '$HOME/.bashrc'
 }
 
-package_docker()
+# a generic function to package a journal topic with only tools given its path
+# relative to the journal root
+package_generic()
 {
-  log_info packaging docker
+  topic_dir="$1"
+  topic_tools_dir="$topic_dir/tools"
 
-  cp --recursive --dereference docker/tools/* "$tools_dir"
-}
+  log_info "packaging $(basename "$topic_dir")"
 
-package_elasticsearch()
-{
-  log_info packaging elasticsearch
-}
-
-package_harvester()
-{
-  log_info packaging harvester
-
-  cp --recursive --dereference harvester/tools/* "$tools_dir"
+  if [ -d "$topic_tools_dir" ]; then
+    if ! cp --recursive --dereference "$topic_tools_dir"/* "$tools_dir"; then
+      log_error "error packaging $(basename "$topic_dir")"
+    fi
+  fi
 }
 
 package_fish()
@@ -97,23 +94,11 @@ package_fish()
   register_cfg config.fish '$HOME/.config/fish/config.fish'
 }
 
-package_kubernetes()
-{
-  log_info packaging kubectl
-  cp --recursive --dereference kubernetes/tools/* "$tools_dir"
-}
-
-package_rancher()
-{
-  log_info packaging rancher
-  cp --recursive --dereference rancher/tools/* "$tools_dir"
-}
-
 package_tools()
 {
   log_info "packaging tools"
 
-  cp tools/logger.sh "$tools_dir"
+  cp tools/*.sh "$tools_dir"
 
   register_cfg tools '$HOME/tools'
 }
@@ -132,12 +117,12 @@ package_targets()
   cp "$resource_dir/install.sh" "$config_dir"
 
   if $with_all || $with_bash; then package_bash; else log_info skipping bash; fi
-  if $with_all || $with_docker; then package_docker; else log_info skipping docker; fi
-  if $with_all || $with_elasticsearch; then package_elasticsearch; else log_info skipping elasticsearch; fi
-  if $with_all || $with_harvester; then package_harvester; else log_info skipping harvester; fi
+  if $with_all || $with_docker; then package_generic docker; else log_info skipping docker; fi
+  if $with_all || $with_elasticsearch; then package_generic elasticsearch; else log_info skipping elasticsearch; fi
+  if $with_all || $with_harvester; then package_generic harvester; else log_info skipping harvester; fi
   if $with_all || $with_fish; then package_fish; else log_info skipping fish; fi
-  if $with_all || $with_kubernetes; then package_kubernetes; else log_info skipping kubernetes; fi
-  if $with_all || $with_kubernetes; then package_rancher; else log_info skipping rancher; fi
+  if $with_all || $with_kubernetes; then package_generic kubernetes; else log_info skipping kubernetes; fi
+  if $with_all || $with_rancher; then package_generic rancher; else log_info skipping rancher; fi
 
   if $with_all || $with_tools; then
     package_tools
