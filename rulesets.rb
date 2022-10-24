@@ -1,13 +1,14 @@
 rule 'MY000', 'A more strict version of MD013 to enforce line length limits excluding links' do
   tags :line_length
+#   docs 'https://github.com/joshmeranda/MyJournal/#MY000'
   aliases 'strict-line-length'
-  docs "https://github.com/joshmeranda/MyJournal/#MY000"
   params :line_length => 120, :ignore_code_blocks => true, :ignore_tables => true, :ignore_links => true
 
   check do |doc|
     # Increment :line_length to accommodate for unix line endings
     params[:line_length] += 1
 
+    # todo: we can easily optimize this by only searching if the element type is ignored
     # Every line in the document that is part of a code block.
     codeblock_lines = doc.find_type_elements(:codeblock).map do |e|
       (doc.element_linenumber(e)..
