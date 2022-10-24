@@ -5,4 +5,6 @@ rule 'MD004', :bullet => :dash
 
 rule 'MD007', :indent => 4
 
-rule 'MD013', :line_length => 120, :tables => false
+exclude_rule 'MD013'
+
+rule 'MY000'
