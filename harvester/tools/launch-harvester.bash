@@ -13,6 +13,11 @@ args:
 Note: if both -d and -r are specified only -d will be used.
 "
 
+list_releases()
+{
+  curl --silent https://api.github.com/repos/harvester/harvester/releases | jq '.[].tag_name' | tr --delete '"'
+}
+
 while [ $# -gt 0 ]; do
   case "$1" in
     -h)
@@ -25,10 +30,16 @@ while [ $# -gt 0 ]; do
       ;;
     -r)
       release_version="$2"
+
+      if ! list_releases | grep --quiet "$release_version"; then
+        echo "could not find the harvester release '$release_version'"
+        echo "run '$(basename "$0") -l' to get a list of harvester releases"
+      fi
+
       shift
       ;;
     -l)
-      curl --silent https://api.github.com/repos/harvester/harvester/releases | jq '.[].tag_name' | tr --delete '"'
+      list_releases
       exit
       ;;
     *)
