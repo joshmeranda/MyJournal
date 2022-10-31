@@ -29,10 +29,29 @@ all harvester isos. For example, the latest commit tha run the `v1.0.3` iso is t
 ## Yq
 
 Many of the scripts in harvester rely on `yq` to query and modify yaml files. To get the version used by harvester run
-the following command (pulled from
-[this line](https://github.com/harvester/harvester/blob/dc6a30894d63a07ba8b6db5433a7054f71445fde/Dockerfile.dapper#L22)
+the following command (pulled from [this line](https://github.com/harvester/harvester/blob/dc6a30894d63a07ba8b6db5433a7054f71445fde/Dockerfile.dapper#L22)
 in harvester):
 
 ```sh
 GO111MODULE=on go install github.com/mikefarah/yq/v4@v4.6.0
 ```
+
+## Getting Image Names
+
+When creating node templates for rancher, it requires that you provide an image name. You must provide the real name of
+the image as stored in teh harvester cluster, so providing the human-readable display name you gave the image when you
+uploaded the image to harvester will not work. You cannot view the real name of the image from the harvester UI. To get
+it you can leverage `kubectl`:
+
+```shell
+$ kubectl get virtualmachineimages
+NAME          DISPLAY-NAME                       SIZE        AGE
+image-dn9g4   bionic-server-cloudimg-arm64.img   362676224   2m56s
+```
+
+## Testing
+
+I've found that the best resource when I don't know how to test a modification that I made works is the
+[Harvester Test Repo](https://github.com/harvester/tests/tree/main/docs/content/manual), which contains Harvester's test
+suite. To view the manual test steps for many aspects of Harvester, you can navigate to [`docs/content/manual`](https://github.com/harvester/tests/tree/main/docs/content/manual)
+and look for any relevant files.
