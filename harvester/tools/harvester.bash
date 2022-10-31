@@ -72,6 +72,10 @@ up()
 
         shift
         ;;
+      -g)
+        ipxe_example_repo="$2"
+        shift
+        ;;
       *)
         echo "unrecognized argument '$1'"
         echo "$usage"
@@ -124,7 +128,7 @@ up()
 down()
 {
   if [ "$(id -u)" -ne 0 ]; then
-    log_error " down must be run as root"
+    log_error "down must be run as root"
     exit 1
   fi
 
