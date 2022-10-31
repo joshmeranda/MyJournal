@@ -2,9 +2,10 @@
 
 source "$(dirname "$0")/logger.sh"
 
-usage="Usage: $(basename "$0") [-f] [-i <version>] [-e <env-file>]
+usage="Usage: $(basename "$0") [-f] [-i <image>] [-e <env-file>]
 
 args:
+  -h       show this help text
   -f       follow the container logs once deployed
   -i       the rancher docker image to use [rancher/rancher:latest]
   -e       the env file to pass to the docker container
@@ -17,8 +18,16 @@ docker_flags=(--detach --privileged --restart=unless-stopped --publish 80:80 --p
 
 while [ $# -gt 0 ]; do
   case "$1" in
+    -h)
+      echo "$usage"
+      exit
+      ;;
     -f)
       follow_logs=true
+      ;;
+    -i)
+      image="$2"
+      shift
       ;;
     -e)
       rancher_env_file="$2"
