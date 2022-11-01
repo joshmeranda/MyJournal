@@ -1,0 +1,1 @@
+rule 'MY000', :line_length => 10, :ignore_links => false

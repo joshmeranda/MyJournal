@@ -49,6 +49,19 @@ Note that installing the `mdl` too using `gem` as described in [markdownlint's i
 resulted in a binary named `mdl.ruby2.5` rather than the expected `mdl`. For this project's [hooks](/hooks) to work you
 will need to create a symlink to `mdl.ruby2.5` called `mdl` somewhere  on your `PATH`.
 
+### Custom Rule
+
+#### MY000
+
+I don't like that the default `line_length` rule (ie `MD013`) only checks that there is no whitespace after the given
+length limit to allow for long links. I would like to keep the exception for links, but enforce this strictly for
+everything else.
+
+I am also not a fan of how `mdl` includes the trailing newline in the total line length. In my implementation I simply
+increment the specified `:line_length` param by 1. Ideally we'd actually check for the line ending, but I will only ever
+be developing on linux machines for the foreseeable future, so I only really need to be worried about the unix `\n`
+line ending.
+
 ## Tools
 
 Under the `tools` directory you wil find some general purpose scripts intended to be used by other scripts in this

@@ -1,0 +1,2 @@
+rulesets ["#{File.dirname(__FILE__)}/rulesets.rb"]
+style "#{File.dirname(__FILE__)}/style.rb"

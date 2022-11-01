@@ -1,0 +1,1 @@
+rule 'MY000', :line_length => 10
