@@ -2,19 +2,28 @@
 
 source "$(dirname "$0")/logger.sh"
 
+cert_dir="$(dirname "$0")/rancher-certs"
+rancher_env_file="$(dirname "$0")/rancher.env"
+image="rancher/rancher:latest"
+
+# make sure you use this name when setting a custom rancher url
+#rancher_dns=rancher.mgmt.com
+
 usage="Usage: $(basename "$0") [-f] [-i <image>] [-e <env-file>]
 
 args:
-  -h       show this help text
-  -f       follow the container logs once deployed
-  -i       the rancher docker image to use [rancher/rancher:latest]
-  -e       the env file to pass to the docker container
+  -h              show this help text
+  -f              follow the container logs once deployed
+  -i <image>      the rancher docker image to use [$image]
+  -e <env-file>   the env file to pass to the docker container [$rancher_env_file]
+  -c              use custom self-signed rancher certs
+  -d              set the log level to debug
 "
 
 follow_logs=false
-image="rancher/rancher:latest"
 cnt_name=rancher
-docker_flags=(--detach --privileged --restart=unless-stopped --publish 80:80 --publish 443:443 --name "$cnt_name")
+rancher_flags=(--detach --privileged --restart=unless-stopped --publish 80:80 --publish 443:443 --name "$cnt_name")
+self_signed_certs=false
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -33,6 +42,13 @@ while [ $# -gt 0 ]; do
       rancher_env_file="$2"
       shift
       ;;
+    -c)
+      self_signed_certs=true
+      ;;
+    -d)
+      rancher_flags+=(--env CATTLE_DEBUG=true)
+      rancher_flags+=(--env RANCHER_DEBUG=true)
+      ;;
     *)
       echo "unrecognized argument '$1'"
       echo "$usage"
@@ -46,13 +62,33 @@ if [ ! -f "$rancher_env_file" ]; then
   log_warning "no such env file at '$rancher_env_file'"
 else
   log_info "reading rancher env from '$rancher_env_file'"
-  docker_flags=("$docker_flags" --env-file "$rancher_env_file")
+  rancher_flags+=(--env-file)
+  rancher_flags+=("$rancher_env_file")
 
   log_debug
   while read -r line; do
     log_debug "$line"
   done<"$rancher_env_file"
   log_debug
+fi
+
+if $self_signed_certs; then
+  if [ ! -d "$cert_dir" ]; then
+    log_info "generating self signed certs in '$cert_dir'"
+    docker run --volume "$cert_dir:/certs" \
+               --env CA_SUBJECT='Self Signed Cert' \
+               --env CA_EXPIRE=1825 \
+               --env SSL_EXPIRE=365 \
+               --env SSL_SUBJECT="{}" \
+               --env SSL_DNS="{}" \
+               superseb/omgwtfssl > /dev/null 2>&1
+  else
+    log_info "using existing certs at '$cert_dir'"
+  fi
+
+  rancher_flags+=(--mount "type=bind,source=$cert_dir/cert.pem,target=/etc/rancher/ssl/cert.pem" \
+                  --mount "type=bind,source=$cert_dir/key.pem,target=/etc/rancher/ssl/key.pem" \
+                  --mount "type=bind,source=$cert_dir/ca.pem,target=/etc/rancher/ssl/cacerts.pem")
 fi
 
 log_info launching rancher with image "'$image'"
@@ -64,13 +100,14 @@ if [ -n "$(docker container ls --quiet --all --filter "name=$cnt_name")" ]; then
   docker container rm "$cnt_name" > /dev/null 2>&1
 fi
 
-log_info 'starting rancher container'
-if ! docker run "${docker_flags[@]}" $image 1> /dev/null; then
+log_info "starting rancher container with '$image'"
+log_debug "rancher_args: ${rancher_flags[@]}"
+if ! docker run "${rancher_flags[@]}" $image 1> /dev/null; then
   log_error could not start container
   exit 2
 fi
 
-if ! "$(dirname "$0")/wf.sh" -m 12 -i 5 -p -o last-err curl localhost; then
+if ! "$(dirname "$0")/wf.sh" -m 20 -i 5 -p -o last-err curl localhost; then
   log_error "error waiting for rancher to start"
   exit 1
 fi
@@ -82,15 +119,15 @@ echo "$default_password" > "$password_file"
 
 # todo: we can probably do this kubeconfig stuff while waiting for the container to start
 # get kubeconfig
-rancher_kubeconfig=/etc/rancher/k3s/k3s.yaml
-cp_dst="$HOME/.kube/config.rancher"
-
-log_info "copying rancher kubeconfig '$rancher_kubeconfig' to '$cp_dst'"
-docker cp "$cnt_name:$rancher_kubeconfig" "$cp_dst"
-
-rancher_ip="$(docker container inspect --format '{{ .NetworkSettings.IPAddress }}' "$cnt_name")"
-log_info "pointing new rancher kubeconfig to container ip '$rancher_ip'"
-yq --inplace eval ".clusters[0].cluster.server |= \"$rancher_ip\"" "$cp_dst"
+#rancher_kubeconfig=/etc/rancher/k3s/k3s.yaml
+#cp_dst="$HOME/.kube/config.rancher"
+#
+#log_info "copying rancher kubeconfig '$rancher_kubeconfig' to '$cp_dst'"
+#docker cp "$cnt_name:$rancher_kubeconfig" "$cp_dst"
+#
+#rancher_ip="$(docker container inspect --format '{{ .NetworkSettings.IPAddress }}' "$cnt_name")"
+#log_info "pointing new rancher kubeconfig to container ip '$rancher_ip'"
+#yq --inplace eval ".clusters[0].cluster.server |= \"$rancher_ip\"" "$cp_dst"
 
 # print informative info
 log_info to access an interactive shell to the rancher image run: docker exec --interactive --tty $cnt_name bash
