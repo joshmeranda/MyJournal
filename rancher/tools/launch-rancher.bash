@@ -6,9 +6,6 @@ cert_dir="$(dirname "$0")/rancher-certs"
 rancher_env_file="$(dirname "$0")/rancher.env"
 image="rancher/rancher:latest"
 
-# make sure you use this name when setting a custom rancher url
-#rancher_dns=rancher.mgmt.com
-
 usage="Usage: $(basename "$0") [-f] [-i <image>] [-e <env-file>]
 
 args:
@@ -16,14 +13,13 @@ args:
   -f              follow the container logs once deployed
   -i <image>      the rancher docker image to use [$image]
   -e <env-file>   the env file to pass to the docker container [$rancher_env_file]
-  -c              use custom self-signed rancher certs
+  -c <cert-dir>   mount the certs in the given directory
   -d              set the log level to debug
 "
 
 follow_logs=false
 cnt_name=rancher
 rancher_flags=(--detach --privileged --restart=unless-stopped --publish 80:80 --publish 443:443 --name "$cnt_name")
-self_signed_certs=false
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -43,7 +39,8 @@ while [ $# -gt 0 ]; do
       shift
       ;;
     -c)
-      self_signed_certs=true
+      cert_dir="$(realpath "$2")"
+      shift
       ;;
     -d)
       rancher_flags+=(--env CATTLE_DEBUG=true)
@@ -72,26 +69,18 @@ else
   log_debug
 fi
 
-if $self_signed_certs; then
+if [ -n "$cert_dir" ]; then
   if [ ! -d "$cert_dir" ]; then
-    log_info "generating self signed certs in '$cert_dir'"
-    docker run --volume "$cert_dir:/certs" \
-               --env CA_SUBJECT='Self Signed Cert' \
-               --env CA_EXPIRE=1825 \
-               --env SSL_EXPIRE=365 \
-               --env SSL_SUBJECT="{}" \
-               --env SSL_DNS="{}" \
-               superseb/omgwtfssl > /dev/null 2>&1
+    log_error "could not find cert directory at '$cert_dir'"
+    exit 1
   else
-    log_info "using existing certs at '$cert_dir'"
+    log_info "using certs at '$cert_dir'"
   fi
 
   rancher_flags+=(--mount "type=bind,source=$cert_dir/cert.pem,target=/etc/rancher/ssl/cert.pem" \
                   --mount "type=bind,source=$cert_dir/key.pem,target=/etc/rancher/ssl/key.pem" \
                   --mount "type=bind,source=$cert_dir/ca.pem,target=/etc/rancher/ssl/cacerts.pem")
 fi
-
-log_info launching rancher with image "'$image'"
 
 # rm any existing rancher containers
 if [ -n "$(docker container ls --quiet --all --filter "name=$cnt_name")" ]; then
