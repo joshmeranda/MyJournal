@@ -57,6 +57,7 @@ up()
     case "$1" in
       -h)
         echo "$launch_usage"
+        exit
         ;;
       -d)
         local artifacts_dir="$(realpath "$2")"
@@ -122,7 +123,20 @@ up()
   if ! "$ipxe_start_script"; then
     log_error 'failed to launch harvester'
     log_info 'make sure your local ipxe example repo is compatible with the requested version of harvester'
+    return
   fi
+
+  password="$(yq eval '.harvester_config.password' "$settings_file")"
+  host_ip="$(yq eval '.harvester_network_config.cluster[0].ip' "$settings_file")"
+
+  log_info "removing '$host_ip' from known hosts"
+  ssh-keygen -R "$host_ip" -f "$HOME/.ssh/known_hosts" > /dev/null 2>&1
+
+  log_info "pulling kubeconfig from created cluster"
+  sshpass -p "$password" ssh -o StrictHostKeyChecking=no "rancher@$host_ip" sudo chmod 644 /etc/rancher/rke2/rke2.yaml
+  # todo: ideally we'd just merge this into a parent (kubectl config view --flatten)
+  sshpass -p "$password" scp "rancher@$host_ip:/etc/rancher/rke2/rke2.yaml" "$HOME/.kube/config.harvester"
+  yq eval --inplace ".clusters[0].cluster.server = \"https://$host_ip:6443\"" "$HOME/.kube/config.harvester"
 }
 
 down()
