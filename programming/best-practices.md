@@ -3,6 +3,8 @@
 While there is rarely one right way to do anything while programming, there are some best practices that will almost
 always improve your code.
 
+You may also want to check out [Programming Principles](principles.md) for more on writing good code!
+
 ## Input / Output (IO)
 
 ### Do not check for file before opening
