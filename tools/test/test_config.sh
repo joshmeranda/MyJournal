@@ -58,16 +58,12 @@ test_config_package_all()
   assertContains "$archived_files" install.sh
   assertContains "$archived_files" tools/docker-login.sh
   assertContains "$archived_files" tools/cp-harv-iso.bash
-  assertContains "$archived_files" tools/get-harv-config.bash
-  assertContains "$archived_files" tools/launch-harvester.bash
   assertContains "$archived_files" tools/logger.sh
-  assertContains "$archived_files" tools/reset-harvester.bash
-  assertContains "$archived_files" tools/run-script.bash
-  assertContains "$archived_files" tools/setup-scripts/harv.bash
-  assertContains "$archived_files" tools/teardown-harvester.bash
+  assertContains "$archived_files" tools/harvester.bash
   assertContains "$archived_files" tools/install_fish.sh
   assertContains "$archived_files" tools/install_kubectl.sh
   assertContains "$archived_files" tools/launch-rancher.bash
+  assertContains "$archived_files" tools/airgapped-upgrade.bash
 }
 
 test_config_package_with_only_bash_fish()
@@ -85,14 +81,11 @@ test_config_package_with_only_bash_fish()
   assertNotContains "$archived_files" tools/docker-login.sh
   assertNotContains "$archived_files" tools/cp-harv-iso.bash
   assertNotContains "$archived_files" tools/get-harv-config.bash
-  assertNotContains "$archived_files" tools/launch-harvester.bash
   assertNotContains "$archived_files" tools/logger.sh
-  assertNotContains "$archived_files" tools/reset-harvester.bash
-  assertNotContains "$archived_files" tools/run-script.bash
-  assertNotContains "$archived_files" tools/setup-scripts/harv.bash
-  assertNotContains "$archived_files" tools/teardown-harvester.bash
+  assertNotContains "$archived_files" tools/harvester.bash
   assertNotContains "$archived_files" tools/install_kubectl.sh
   assertNotContains "$archived_files" tools/launch-rancher.bash
+  assertNotContains "$archived_files" tools/airgapped-upgrade.bash
 }
 
 test_config_install()
@@ -114,12 +107,8 @@ test_config_install()
 
   # harvester tools
   assert_hashes "$container_id" "$journal_dir/harvester/tools/cp-harv-iso.bash" /root/tools/cp-harv-iso.bash
-  assert_hashes "$container_id" "$journal_dir/harvester/tools/get-harv-config.bash" /root/tools/get-harv-config.bash
-  assert_hashes "$container_id" "$journal_dir/harvester/tools/launch-harvester.bash" /root/tools/launch-harvester.bash
-  assert_hashes "$container_id" "$journal_dir/harvester/tools/reset-harvester.bash" /root/tools/reset-harvester.bash
-  assert_hashes "$container_id" "$journal_dir/harvester/tools/teardown-harvester.bash" /root/tools/teardown-harvester.bash
-  assert_hashes "$container_id" "$journal_dir/harvester/tools/run-script.bash" /root/tools/run-script.bash
-  assert_hashes "$container_id" "$journal_dir/harvester/tools/setup-scripts/harv.bash" /root/tools/setup-scripts/harv.bash
+  assert_hashes "$container_id" "$journal_dir/harvester/tools/airgapped-upgrade.bash" /root/tools/airgapped-upgrade.bash
+  assert_hashes "$container_id" "$journal_dir/harvester/tools/harvester.bash" /root/tools/harvester.bash
 
   # other tools
   assert_hashes "$container_id" "$journal_dir/tools/logger.sh" /root/tools/logger.sh
