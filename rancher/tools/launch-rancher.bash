@@ -2,7 +2,6 @@
 
 source "$(dirname "$0")/logger.sh"
 
-cert_dir="$(dirname "$0")/rancher-certs"
 rancher_env_file="$(dirname "$0")/rancher.env"
 image="rancher/rancher:latest"
 
