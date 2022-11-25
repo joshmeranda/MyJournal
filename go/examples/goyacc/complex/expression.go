@@ -32,6 +32,5 @@ func (expr OperatorExpression) Evaluate() int {
 }
 
 func setResult(lexer yyLexer, expr Expression) {
-	//fmt.Printf("=== [setResult] %v \n", expr)
 	lexer.(*Lexer).expr = expr
 }
