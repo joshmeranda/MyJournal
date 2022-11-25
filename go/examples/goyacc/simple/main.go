@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -31,34 +32,38 @@ func (lexer *Lexer) Lex(lval *yySymType) int {
 		return EOF
 	}
 
-	lval.Number = lexer.things[lexer.head]
+	head := lexer.things[lexer.head]
 
 	lexer.head++
 
-	switch lval.String {
-	case "+", "-":
-		return lexer.Lex(lval)
-	default:
+	if n, err := strconv.Atoi(head); err != nil {
+		// handle other tokens
+		switch head {
+		case "+", "-":
+			return int(head[0])
+		}
+	} else {
+		lval.Number = n
 		return NUMBER
 	}
+
+	return -1
 }
 
-func Parse(s string) (Expression, error) {
+func Parse(s string) (int, error) {
 	lexer := NewLexer(s)
 
 	if n := yyParse(&lexer); n != 0 {
-		return nil, fmt.Errorf("could not parse '%s': %w", s, lexer.err)
+		return 0, fmt.Errorf("could not parse '%s': %w", s, lexer.err)
 	}
 
-	return lexer.expr, nil
+	return lexer.result, nil
 }
 
 func main() {
-	yyErrorVerbose = true
-
 	if expr, err := Parse("5 + 6"); err != nil {
 		fmt.Println(err.Error())
 	} else {
-		fmt.Printf("%s\n", expr)
+		fmt.Printf("%v\n", expr)
 	}
 }

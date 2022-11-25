@@ -1,28 +1,24 @@
 %{
 package main
-
-import (
-	"strconv"
-)
 %}
 %union {
 	Number int
 }
 
-%type<Number> expr number
+%type<Number> expr start
 
-%token<Number> DIGIT
+%token<Number> NUMBER
 
 %left '-' '+'
 
 %%
 
+start: expr { setResult(yylex, $$) }
+
 expr : '(' expr ')' { $$ = $2 }
 	| expr '+' expr { $$ = $1 + $3 }
 	| expr '-' expr { $$ = $1 - $3 }
-	| number
+	| NUMBER
 	;
-
-number : DIGIT { $1 }
 
 %%
