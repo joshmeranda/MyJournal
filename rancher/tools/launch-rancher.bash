@@ -48,6 +48,7 @@ while [ $# -gt 0 ]; do
     *)
       echo "unrecognized argument '$1'"
       echo "$usage"
+      exit 1
       ;;
   esac
 
