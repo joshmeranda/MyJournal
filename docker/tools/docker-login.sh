@@ -29,8 +29,6 @@ command_add() {
 	elif [ -z "$plain_token" ]; then
 		printf "expected token but found none\n%s" "$usage"
 		exit 1
-	elif [ -z "$server" ]; then
-		server=docker.io
 	fi
 
 	if [ "$(jq "has(\"$username\")" "$storage_path")" = true ]; then
@@ -40,7 +38,12 @@ command_add() {
 
 	token="$(echo "$plain_token" | base64)"
 
-	out="$(jq ".$username.$token_key=\"$token\" | .$username.$server_key=\"$server\"" "$storage_path")"
+	if [ -n "$server" ]; then
+		out="$(jq ".$username.$token_key=\"$token\" | .$username.$server_key=\"$server\"" "$storage_path")"
+	else
+		out="$(jq ".$username.$token_key=\"$token\"" "$storage_path")"
+	fi
+
 	echo "$out" > "$storage_path"
 }
 
@@ -64,8 +67,11 @@ command_login() {
 		exit 1
 	fi
 
-	token="$(jq ".$username.$token_key" "$storage_path")"
-	server="$(jq ".$username.$server_key" "$storage_path")"
+	token="$(jq -r ".$username.$token_key" "$storage_path" | base64 --decode)"
+
+	if [ "$(jq ".$username | has(\"$server_key\")" "$storage_path")" = true ]; then
+		server="$(jq ".$username.$server_key" "$storage_path")"
+	fi
 
 	if ! echo "$token" | docker login --password-stdin --username "$username" "$server"; then
 		exit 2
