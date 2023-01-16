@@ -1,5 +1,9 @@
 # Kubectl
 
+> Kubernetes provides a command line tool for communicating with a Kubernetes cluster's control plane, using the
+> Kubernetes API.
+>
+> This tool is named kubectl.
 
 ## Documentation
 
