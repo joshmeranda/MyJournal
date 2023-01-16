@@ -15,96 +15,96 @@ token_dir="$HOME/.local/docker-login"
 
 # assert_file ensures that $1 is a file, and exits if not
 assert_file() {
-    if [ ! -e "$1" ]; then
-        echo "could not find token file for user '$(echo "$1" | cut -d . -f 1)'"
-        exit 2
-    elif [ -d "$1" ]; then
-        echo "file '$1' is a directory"
-        exit 2
-    fi
+	if [ ! -e "$1" ]; then
+		echo "could not find token file for user '$(echo "$1" | cut -d . -f 1)'"
+		exit 2
+	elif [ -d "$1" ]; then
+		echo "file '$1' is a directory"
+		exit 2
+	fi
 }
 
 command_add() {
-    local username="$1"
-    local plain_token="$2"
+	local username="$1"
+	local plain_token="$2"
 
-    if [ -z "$username" ]; then
-        echo -e "expected username but found none\n$usage"
-        exit 1
-    elif [ -z "$plain_token" ]; then
-        echo "expected token but found none\n$usage"
-        exit 1
-    fi
+	if [ -z "$username" ]; then
+		echo -e "expected username but found none\n$usage"
+		exit 1
+	elif [ -z "$plain_token" ]; then
+		echo "expected token but found none\n$usage"
+		exit 1
+	fi
 
-    local user_file="$token_dir/$username.token"
+	local user_file="$token_dir/$username.token"
 
-    if [ -e "$user_file" ]; then
-        echo "file already exists for user '$username'"
-        exit 2
-    fi
+	if [ -e "$user_file" ]; then
+		echo "file already exists for user '$username'"
+		exit 2
+	fi
 
-    mkdir --parents "$token_dir"
-    echo "$plain_token" | base64 > "$user_file"
+	mkdir --parents "$token_dir"
+	echo "$plain_token" | base64 > "$user_file"
 }
 
 command_remove() {
-    local username="$1"
-    local user_file="$token_dir/$username.token"
+	local username="$1"
+	local user_file="$token_dir/$username.token"
 
-    assert_file "$user_file"
+	assert_file "$user_file"
 
-    rm "$user_file"
+	rm "$user_file"
 }
 
 command_login() {
-    local username="$1"
+	local username="$1"
 
-    if [ -z "$username" ]; then
-        echo -e "expected username but found none\n$usage"
-        exit 1
-    fi
+	if [ -z "$username" ]; then
+		echo -e "expected username but found none\n$usage"
+		exit 1
+	fi
 
-    local user_file="$token_dir/$username.token"
+	local user_file="$token_dir/$username.token"
 
-    assert_file "$user_file"
+	assert_file "$user_file"
 
-    local token="$(base64 --decode "$user_file")"
+	local token="$(base64 --decode "$user_file")"
 
-    if ! echo "$token" | docker login --password-stdin --username "$username"; then
-        exit 2
-    fi
+	if ! echo "$token" | docker login --password-stdin --username "$username"; then
+		exit 2
+	fi
 }
 
 command_list() {
-    if [ ! -e "$token_dir" ]; then
-      return
-    fi
+	if [ ! -e "$token_dir" ]; then
+		return
+	fi
 
-    ls "$token_dir" | cut -d . -f 1
+	ls "$token_dir" | cut -d . -f 1
 }
 
 if [ "$#" -eq 0 ]; then
-    echo -e "expected command but found none\n$usage"
-    exit 1
+	printf "expected command but found none\n$usage"
+	exit 1
 fi
 
 command=$1
 shift
 
 case $command in
-    add)
-        command_add "$@"
-         ;;
-    remove)
-        command_remove "$@"
-        ;;
-    login)
-        command_login "$@"
-         ;;
-    list)
-        command_list
-        ;;
-    *)
-        echo -e "unknown command '$command'\n$usage"
-         ;;
+	add)
+		command_add "$@"
+		 ;;
+	remove)
+		command_remove "$@"
+		;;
+	login)
+		command_login "$@"
+		;;
+	list)
+		command_list
+		;;
+	*)
+		echo -e "unknown command '$command'\n$usage"
+		;;
 esac
