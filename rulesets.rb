@@ -1,8 +1,9 @@
-rule 'MY000', 'A more strict version of MD013 to enforce line length limits excluding links' do
+rule 'MY000', 'A more strict version of MD013 to enforce line length limits excluding links and their trailing punctuation' do
   tags :line_length
 #   docs 'https://github.com/joshmeranda/MyJournal/#MY000'
-  aliases 'strict-line-length'
-  params :line_length => 120, :ignore_code_blocks => true, :ignore_tables => true, :ignore_links => true
+  aliases 'stricter-line-length'
+  params :line_length => 120, :ignore_code_blocks => true, :ignore_tables => true, :ignore_links => true,
+         :ignore_link_punctuation => true
 
   check do |doc|
     # Increment :line_length to accommodate for unix line endings
@@ -42,7 +43,10 @@ rule 'MY000', 'A more strict version of MD013 to enforce line length limits excl
     #  - [link text](some-url "Some Title")
     #  - <some-url>
     # todo: ideally we'd only search through overlines but this should be fine for now
-    if params[:ignore_links]
+    if params[:ignore_links] && params[:ignore_link_punctuation]
+      overlines -= doc.matching_lines(/^.*\[.*\]\(.*\)[,.?;:!]*$/)
+      overlines -= doc.matching_lines(/^.*<.*>[,.?;:!]*$/)
+    elsif params[:ignore_links]
       overlines -= doc.matching_lines(/^.*\[.*\]\(.*\)$/)
       overlines -= doc.matching_lines(/^.*<.*>$/)
     end

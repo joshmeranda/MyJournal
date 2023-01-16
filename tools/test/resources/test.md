@@ -13,3 +13,5 @@
 ```shell
 $ echo 'this is a really long code block'
 ```
+
+[sample url with punctuation](https://github.com/joshmeranda/MyJournal)!

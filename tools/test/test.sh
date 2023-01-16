@@ -12,7 +12,7 @@ all_targets="$(find "$test_dir" -maxdepth 1 -type f -name 'test_*.sh' \
               | cut --delimiter _ --field 2- \
               | cut --delimiter . --field 1)"
 
-usage="Usage: $(basename $0) [-h --help] [targets...]
+usage="Usage: $(basename $0) [-h|--help] [targets...]
 
 If no targets are specified, it will be assumed that you want to test all
 targets. Run tests on tools in myjournal. To add a new target add a new file
