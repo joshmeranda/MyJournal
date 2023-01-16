@@ -1,95 +1,96 @@
 #!/usr/bin/env sh
 # docker-login is a utility to make it easier to store docker access tokens (in not-quite-plain-text) and manage
 # multiple accounts if needed
+# todo: add dry-run
 
 usage="Usage: $(basename $0) <command> <args...>
 
 commands:
-  add <username> <plain-token>  add a user and token pair
-  remove <username>             remove a user and token pair
-  login <username>              authenticate the given user with docker hub using the stored token
-  list                          list available users
+  add <username> <plain-token> [server]
+                        add a user and token pair, is no server is specified 'docker.io' is assumed
+  remove <username>     remove a user and token pair
+  login <username>      authenticate the given user with docker hub using the stored token
+  list                  list available users
 "
 
-token_dir="$HOME/.local/docker-login"
+storage_path="$HOME/.docker-login.json"
 
-# assert_file ensures that $1 is a file, and exits if not
-assert_file() {
-	if [ ! -e "$1" ]; then
-		echo "could not find token file for user '$(echo "$1" | cut -d . -f 1)'"
-		exit 2
-	elif [ -d "$1" ]; then
-		echo "file '$1' is a directory"
-		exit 2
-	fi
-}
+token_key=token
+server_key=server
 
 command_add() {
-	local username="$1"
-	local plain_token="$2"
+	username="$1"
+	plain_token="$2"
+	server="$3"
 
 	if [ -z "$username" ]; then
-		echo -e "expected username but found none\n$usage"
+		printf "expected username but found none\n%s" "$usage"
 		exit 1
 	elif [ -z "$plain_token" ]; then
-		echo "expected token but found none\n$usage"
+		printf "expected token but found none\n%s" "$usage"
+		exit 1
+	elif [ -z "$server" ]; then
+		server=docker.io
+	fi
+
+	if [ "$(jq "has(\"$username\")" "$storage_path")" = true ]; then
+		printf "entry already exists for user '%s'" "$username"
 		exit 1
 	fi
 
-	local user_file="$token_dir/$username.token"
+	token="$(echo "$plain_token" | base64)"
 
-	if [ -e "$user_file" ]; then
-		echo "file already exists for user '$username'"
-		exit 2
-	fi
-
-	mkdir --parents "$token_dir"
-	echo "$plain_token" | base64 > "$user_file"
+	out="$(jq ".$username.$token_key=\"$token\" | .$username.$server_key=\"$server\"" "$storage_path")"
+	echo "$out" > "$storage_path"
 }
 
 command_remove() {
-	local username="$1"
-	local user_file="$token_dir/$username.token"
+	username="$1"
 
-	assert_file "$user_file"
-
-	rm "$user_file"
-}
-
-command_login() {
-	local username="$1"
-
-	if [ -z "$username" ]; then
-		echo -e "expected username but found none\n$usage"
+	if [ "$(jq "has(\"$username\")" "$storage_path")" = false ]; then
+		printf "no entry for user '%s' exists" "$username"
 		exit 1
 	fi
 
-	local user_file="$token_dir/$username.token"
+	out="$(jq "del(.$username)" "$storage_path")"
+	echo "$out" > "$storage_path"
+}
 
-	assert_file "$user_file"
+command_login() {
+	username="$1"
 
-	local token="$(base64 --decode "$user_file")"
+	if [ -z "$username" ]; then
+		printf "expected username but found none\n%s" "$usage"
+		exit 1
+	fi
 
-	if ! echo "$token" | docker login --password-stdin --username "$username"; then
+	token="$(jq ".$username.$token_key" "$storage_path")"
+	server="$(jq ".$username.$server_key" "$storage_path")"
+
+	if ! echo "$token" | docker login --password-stdin --username "$username" "$server"; then
 		exit 2
 	fi
 }
 
 command_list() {
-	if [ ! -e "$token_dir" ]; then
+	if [ ! -e "$storage_path" ]; then
 		return
 	fi
 
-	ls "$token_dir" | cut -d . -f 1
+	jq 'keys' .docker-login.json | tail -n +2 | head -n -1 | tr --delete '"' | tr --delete , | tr --delete ' '
 }
 
 if [ "$#" -eq 0 ]; then
-	printf "expected command but found none\n$usage"
+	printf "expected command but found none\n%s" "$usage"
 	exit 1
 fi
 
 command=$1
 shift
+
+if [ ! -e "$storage_path" ]; then
+	echo '{}' > "$storage_path"
+fi
 
 case $command in
 	add)
@@ -105,6 +106,6 @@ case $command in
 		command_list
 		;;
 	*)
-		echo -e "unknown command '$command'\n$usage"
+		printf "unknown command '%s'\n%s" "$command" "$usage"
 		;;
 esac
