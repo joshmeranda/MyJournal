@@ -71,12 +71,11 @@ args:
 
 temp_dir="$(mktemp --directory)"
 config_dir="$temp_dir/myjournal-config"
-tools_dir="$config_dir/tools"
 config_file="$config_dir/config.json"
 
 overwrite=false
 
-# install the target ($1) to the destination ($2
+# install the target ($1) to the destination ($2)
 #
 install_target()
 {

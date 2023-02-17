@@ -27,6 +27,9 @@ table of commands that take the `-f --filter` option, and a link to a reference 
 | `docker container ls` | https://docs.docker.com/engine/reference/commandline/ps/                                                                  |
 | `docker image ls`     | https://github.com/moby/moby/blob/10c0af083544460a2ddc2218f37dc24a077f7d90/docs/reference/commandline/images.md#filtering |
 
+If you want to list all images with of the same name *that have a tag* (ie don't include tags like `golang:<none>`) you
+can use the filter `reference='golang:*'`
+
 ## Running Docker as Non-Superuser
 
 The [post-install docs](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)

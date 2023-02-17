@@ -57,6 +57,7 @@ test_config_package_all()
   assertContains "$archived_files" config.json
   assertContains "$archived_files" install.sh
   assertContains "$archived_files" tools/docker-login.sh
+  assertContains "$archived_files" tools/push-proxy.bash
   assertContains "$archived_files" tools/cp-harv-iso.bash
   assertContains "$archived_files" tools/logger.sh
   assertContains "$archived_files" tools/harvester.bash
@@ -79,6 +80,7 @@ test_config_package_with_only_bash_fish()
   assertContains "$archived_files" tools/install_fish.sh
 
   assertNotContains "$archived_files" tools/docker-login.sh
+  assertNotContains "$archived_files" tools/push-proxy.bash
   assertNotContains "$archived_files" tools/cp-harv-iso.bash
   assertNotContains "$archived_files" tools/get-harv-config.bash
   assertNotContains "$archived_files" tools/logger.sh
@@ -104,6 +106,7 @@ test_config_install()
 
   # docker tools
   assert_hashes "$container_id" "$journal_dir/docker/tools/docker-login.sh" /root/tools/docker-login.sh
+  assert_hashes "$container_id" "$journal_dir/docker/tools/push-proxy.bash" /root/tools/push-proxy.bash
 
   # harvester tools
   assert_hashes "$container_id" "$journal_dir/harvester/tools/cp-harv-iso.bash" /root/tools/cp-harv-iso.bash
