@@ -29,7 +29,8 @@ From the [docs](https://pkg.go.dev/cmd/link):
 ```
 
 The `importpath` will follow the format `<module_name>/<path_to_parent_package>.<variable_name>`. The easiest way to
-determine the full import path is to run `go tool nm | grep <variable_name>`. Note from the excerpt above that this
-functionality only support `string` values, and cannot affect `const` values.
+determine the full import path is to run `go tool nm <file> | grep <variable_name>`. For this tool, `file` can be an
+object file, archive, or executable. Note from the excerpt above that this functionality only support `string` values,
+and cannot affect `const` values.
 
 For a simple example of this in action, see [./examples/compile-time-value]().
