@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+# todo: support inverting the condition or provide more condition options
+
 usage="Usage: $(basename "$0") [-hq] [-m <max-attempts>] [-i <interval>]
 																		 [-o <never|last|last-err|all>] <args>...
 

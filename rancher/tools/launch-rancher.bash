@@ -106,24 +106,13 @@ log_info default password: "'$default_password'"
 password_file=rancher_password
 echo "$default_password" > "$password_file"
 
-# todo: we can probably do this kubeconfig stuff while waiting for the container to start
-# get kubeconfig
-#rancher_kubeconfig=/etc/rancher/k3s/k3s.yaml
-#cp_dst="$HOME/.kube/config.rancher"
-#
-#log_info "copying rancher kubeconfig '$rancher_kubeconfig' to '$cp_dst'"
-#docker cp "$cnt_name:$rancher_kubeconfig" "$cp_dst"
-#
-#rancher_ip="$(docker container inspect --format '{{ .NetworkSettings.IPAddress }}' "$cnt_name")"
-#log_info "pointing new rancher kubeconfig to container ip '$rancher_ip'"
-#yq --inplace eval ".clusters[0].cluster.server |= \"$rancher_ip\"" "$cp_dst"
-
 # print informative info
+log_info rancher is published at ports 80 adn 443
 log_info to access an interactive shell to the rancher image run: docker exec --interactive --tty $cnt_name bash
 
 if $follow_logs; then
 	log_info showing logs
-	docker logs --follow_logs $cnt_name
+	docker logs --follow $cnt_name
 else
-	log_info to view and follow_logs logs run: docker logs --follow_logs $cnt_name
+	log_info to view and follow logs run: docker logs --follow $cnt_name
 fi

@@ -13,6 +13,7 @@ opts:
 	-f --filters  	        treat arguments as filters
 	-d --directory <path>   destination to scp the saved image archive to
 	   --image-file <path>  path to save the images to
+	-n --no-confirm         do not ask for confirmation before saving and pushing images
 
 Images without a tag will never be matched
 "
@@ -66,18 +67,18 @@ while [ $# -gt 0 ]; do
 			filters=true
 			images=false
 			;;
-	-d | --destination)
-		scp_destination="$1"
-		;;
-	--image-file)
-		image_file="$1"
-		;;
-	-n | ---no-confirm)
-		confirm=false
-		;;
-	*)
-		break
-		;;
+		-d | --destination)
+			scp_destination="$1"
+			;;
+		--image-file)
+			image_file="$1"
+			;;
+		-n | --no-confirm)
+			confirm=false
+			;;
+		*)
+			break
+			;;
 	esac
 	shift
 done

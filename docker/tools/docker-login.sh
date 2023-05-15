@@ -1,7 +1,6 @@
 #!/usr/bin/env sh
 # docker-login is a utility to make it easier to store docker access tokens (in not-quite-plain-text) and manage
 # multiple accounts if needed
-# todo: add dry-run
 
 usage="Usage: $(basename $0) <command> <args...>
 
@@ -10,6 +9,7 @@ commands:
                         add a user and token pair, is no server is specified 'docker.io' is assumed
   remove <username>     remove a user and token pair
   login <username>      authenticate the given user with docker hub using the stored token
+  show <username>       show the token for a user
   list                  list available users
 "
 
@@ -78,6 +78,19 @@ command_login() {
 	fi
 }
 
+command_show() {
+	username="$1"
+
+	if [ -z "$username" ]; then
+		printf "expected username but found none\n%s" "$usage"
+		exit 1
+	fi
+
+	token="$(jq -r ".$username.$token_key" "$storage_path" | base64 --decode)"
+
+	echo $token
+}
+
 command_list() {
 	if [ ! -e "$storage_path" ]; then
 		return
@@ -107,6 +120,9 @@ case $command in
 		;;
 	login)
 		command_login "$@"
+		;;
+	show)
+		command_show "$@"
 		;;
 	list)
 		command_list
