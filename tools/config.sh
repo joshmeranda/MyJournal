@@ -36,15 +36,23 @@ config_file="$config_dir/config.json"
 
 config_json='{}'
 
-with_all=false
-with_bash=false
-with_docker=false
-with_elasticsearch=false
-with_harvester=false
-with_fish=false
-with_kubernetes=false
-with_rancher=false
-with_tools=false
+topics=(
+	all
+	bash
+	fish
+	docker
+	elasticsearch
+	harvester
+	docker
+	kubernetes
+	rancher
+	opni
+	tools
+)
+
+for topic in "${topics[@]}"; do
+	export "with_$topic"=false
+done
 
 # add a target ($1) destination ($2) pair to $config_file json configuration if
 # the destination already exists in the configuration the pre-existing value is
@@ -120,11 +128,11 @@ package_kubernetes()
 # archive.
 #
 # when copying symlinks, ALWAYS deference it to avoid broken links
-package_targets()
+package_topics()
 {
 	log_debug "tmp directory at '$config_dir'"
 
-	# ensure this directory exists when package targets
+	# ensure this directory exists when packaging topics
 	mkdir --parents "$tools_dir"
 
 	cp "$resource_dir/install.sh" "$config_dir"
@@ -136,6 +144,7 @@ package_targets()
 	if $with_all || $with_fish; then package_fish; else log_info skipping fish; fi
 	if $with_all || $with_kubernetes; then package_kubernetes; else log_info skipping kubernetes; fi
 	if $with_all || $with_rancher; then package_generic rancher; else log_info skipping rancher; fi
+	if $with_all || $with_opni; then package_generic opni; else log_info skipping opni; fi
 
 	if $with_all || $with_tools; then
 		package_tools
@@ -198,4 +207,4 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
-package_targets
+package_topics

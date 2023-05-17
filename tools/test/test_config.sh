@@ -66,6 +66,8 @@ test_config_package_all()
   assertContains "$archived_files" tools/install_kubectl.sh
   assertContains "$archived_files" tools/launch-rancher.bash
   assertContains "$archived_files" tools/airgapped-upgrade.bash
+  assertContains "$archived_files" tools/install-aws-ebs-csi.bash
+  assertContains "$archived_files" tools/nuke.bash
 }
 
 test_config_package_with_only_bash_fish()
@@ -118,6 +120,10 @@ test_config_install()
   # kubernetes
   assert_hashes "$container_id" "$journal_dir/kubernetes/tools/install_kubectl.sh" /root/tools/install_kubectl.sh
   assert_hashes "$container_id" "$journal_dir/kubernetes/config/k9s/k9s.yml" /root/.config/k9s/k9s.yml
+
+  # opni
+  assert_hashes "$container_id" "$journal_dir/opni/tools/install-aws-ebs-csi.bash" /root/tools/install-aws-ebs-csi.bash 
+  assert_hashes "$container_id" "$journal_dir/opni/tools/nuke.bash" /root/tools/nuke.bash 
 
   # other tools
   assert_hashes "$container_id" "$journal_dir/tools/logger.sh" /root/tools/logger.sh
