@@ -49,6 +49,8 @@ with_tools=false
 # add a target ($1) destination ($2) pair to $config_file json configuration if
 # the destination already exists in the configuration the pre-existing value is
 # used.
+#
+# we shuold separate configs into new top-level dir
 register_cfg()
 {
 	dest="$(echo "$config_json" | jq ".[\"$1\"]" | tr --delete '"')"
@@ -69,7 +71,7 @@ package_bash()
 	register_cfg .bashrc '$HOME/.bashrc'
 }
 
-# a generic function to package a journal topic with only tools given its path
+# a generic function to package a journal topic ($1) with only tools given its path
 # relative to the journal root
 package_generic()
 {
@@ -103,6 +105,17 @@ package_tools()
 	register_cfg tools '$HOME/tools'
 }
 
+package_kubernetes()
+{
+	log_info "packaging kubernetes"
+
+	# k9s configuration
+	cp kubernetes/config/k9s/k9s.yml "$config_dir"
+	cp kubernetes/tools/install_kubectl.sh "$tools_dir"
+
+	register_cfg k9s.yml '$HOME/.config/k9s/k9s.yml'
+}
+
 # package all of configurations and tools from myjournal into a single tar
 # archive.
 #
@@ -121,7 +134,7 @@ package_targets()
 	if $with_all || $with_elasticsearch; then package_generic elasticsearch; else log_info skipping elasticsearch; fi
 	if $with_all || $with_harvester; then package_generic harvester; else log_info skipping harvester; fi
 	if $with_all || $with_fish; then package_fish; else log_info skipping fish; fi
-	if $with_all || $with_kubernetes; then package_generic kubernetes; else log_info skipping kubernetes; fi
+	if $with_all || $with_kubernetes; then package_kubernetes; else log_info skipping kubernetes; fi
 	if $with_all || $with_rancher; then package_generic rancher; else log_info skipping rancher; fi
 
 	if $with_all || $with_tools; then

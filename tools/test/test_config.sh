@@ -55,6 +55,7 @@ test_config_package_all()
   assertContains "$archived_files" .bashrc
   assertContains "$archived_files" config.fish
   assertContains "$archived_files" config.json
+  assertContains "$archived_files" k9s.yml
   assertContains "$archived_files" install.sh
   assertContains "$archived_files" tools/docker-login.sh
   assertContains "$archived_files" tools/push-proxy.bash

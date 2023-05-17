@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: wait
+    labels:
+        app: test-deplyment
+spec:
+    replicas: 3
+    selector:
+        matchLabels:
+            app: test-deployment
+    template:
+        metadata:
+            labels:
+                app: test-deployment
+        spec:
+            containers:
+            - name: waiter
+              image: alpine:latest
+              command: ["sh", "-c", "while :; do date '+%F %T %z'; sleep 5; done"]
