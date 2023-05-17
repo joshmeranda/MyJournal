@@ -80,6 +80,7 @@ test_config_package_with_only_bash_fish()
   assertContains "$archived_files" install.sh
   assertContains "$archived_files" tools/install_fish.sh
 
+  assertNotContains "$archived_files" k9s.yml
   assertNotContains "$archived_files" tools/docker-login.sh
   assertNotContains "$archived_files" tools/push-proxy.bash
   assertNotContains "$archived_files" tools/cp-harv-iso.bash
@@ -113,6 +114,10 @@ test_config_install()
   assert_hashes "$container_id" "$journal_dir/harvester/tools/cp-harv-iso.bash" /root/tools/cp-harv-iso.bash
   assert_hashes "$container_id" "$journal_dir/harvester/tools/airgapped-upgrade.bash" /root/tools/airgapped-upgrade.bash
   assert_hashes "$container_id" "$journal_dir/harvester/tools/harvester.bash" /root/tools/harvester.bash
+
+  # kubernetes
+  assert_hashes "$container_id" "$journal_dir/kubernetes/tools/install_kubectl.sh" /root/tools/install_kubectl.sh
+  assert_hashes "$container_id" "$journal_dir/kubernetes/config/k9s/k9s.yml" /root/.config/k9s/k9s.yml
 
   # other tools
   assert_hashes "$container_id" "$journal_dir/tools/logger.sh" /root/tools/logger.sh
