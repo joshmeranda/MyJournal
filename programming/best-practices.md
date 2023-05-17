@@ -91,23 +91,24 @@ include how to use them your project's readme.
 The battle for the ages is "Tabs vs Spaces." At surface level, this argument seems very subjective, without any *real*
 arguments on either side; however, there are some real arguments for both sides.
 
-If you're just looking for how I feel its simple: do what you want, just don't be a dick ot others.
+If you're just looking for how I feel its simple: tabs are better in terms of storage efficiency, inclusivity for the
+vision imparied, and customization. But in the end do what you want, and don't be mean when others disagree.
 
 #### Tabs
 
 One of the most clear arguments for spaces is the smaller storage impact. If most of your lines of code are going to be
 indented by either tabs or spaces, you will always have more bytes per line when using spaces over tabs. In most cases
 I don't think this matters much. Maybe in the "olden times" when storage was sold at a premium this made sense, but
-storage is pretty cheap nowadays and most of my code isn't even stored locally. In compiled languages, this doesn't even
-matter much at all since whitespace has no impact on the resulting executable. I will say that in situations like HTML
-where code is being sent over a network to be processed by a client, the increased byte count could really impact
+storage is pretty cheap nowadays and most of my code isn't even stored locally. In compiled languages, this almost
+doesn't even matter much at all since whitespace has no impact on the resulting executable. I will say that in situations
+like HTML where code is being sent over a network to be processed by a client, the increased byte count could really impact
 performance. That being said, we probably shouldn't even be preserving whitespace in HTML where it only exists for the
 programmer, so I'd argue this is mostly a non-issue, but still worth consideration.
 
 The most important argument for using tabs is that fact that they allow programmers to choose their indentation size for
 themselves. This is especially convincing when you consider those of us who are visually impaired and may need greater
 indentation in order to easier differentiate indentation levels. Since I am not visually impaired I don't actually know
-how useful tabs are.
+how useful tabs are, but I'd rather err on the side of inclusivity.
 
 #### Spaces
 

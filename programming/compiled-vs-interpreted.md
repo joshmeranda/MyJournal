@@ -66,17 +66,17 @@ Scripting languages (ex bash, python, etc) tend to be interpreted.
 There is no true "best" between compiled and interpreted languages. As with all thing nuance exists, and what is best\
 for you depends on what you are tyring to do.
 
-| metric            | compiled vs interpreted | notes                                                                                     |
-|-------------------|-------------------------|-------------------------------------------------------------------------------------------|
-| execution speed   | compiled                |                                                                                           |
-| development speed | interpreted             | this is only generally true not necessarily true of all interpreted vs compiled languages |
-| portability       | interpreted             |                                                                                           |
-| type safety       | compiled                |                                                                                           |
+| metric            | compiled vs interpreted | notes                                                                                                       |
+|-------------------|-------------------------|-------------------------------------------------------------------------------------------------------------|
+| execution speed   | compiled                |                                                                                                             |
+| development speed | interpreted             | this is metric especially only generally true not necessarily true of all interpreted vs compiled languages |
+| portability       | interpreted             |                                                                                                             |
+| type safety       | compiled                |                                                                                                             |
 
 ## WTF is Java
 
 Now that I've gone on and one about interpreted and compiled languages, you might notice that Java doesn't seem to fit
-cleanly into either category. You compile it with `javac` your source code into `.class` files, but it runs on a JVM?
+cleanly into either category. You compile your sorce code with `javac` into `.class` files, but it runs on a JVM?
 The best answer is that Java is both!
 
 You compile your `.java` files into the "bytecode" `.class` files, which are optimized for interpretation by the

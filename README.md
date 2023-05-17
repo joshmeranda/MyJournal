@@ -49,7 +49,7 @@ Note that installing the `mdl` too using `gem` as described in [markdownlint's i
 resulted in a binary named `mdl.ruby2.5` rather than the expected `mdl`. For this project's [hooks](/hooks) to work you
 will need to create a symlink to `mdl.ruby2.5` called `mdl` somewhere  on your `PATH`.
 
-### Custom Rule
+### Custom Rules
 
 #### MY000
 
