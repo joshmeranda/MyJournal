@@ -6,6 +6,7 @@ import (
 	"os"
 	"path"
 
+	"github.com/go-git/go-git/v5"
 	"github.com/urfave/cli/v2"
 )
 
@@ -77,7 +78,14 @@ func organizeDir(config organize.Config, dir string) error {
 
 	for _, item := range items {
 		if item.IsDir() {
-			if err := organize.OrganizeRepo(config, path.Join(dir, item.Name())); err != nil {
+			repoPath := path.Join(dir, item.Name())
+			repo, err := git.PlainOpen(repoPath)
+			if err != nil {
+				logger.Printf("ERROR: could not open repo '%s': %s", repoPath, err)
+				continue
+			}
+
+			if err := organize.OrganizeRepo(config, path.Join(dir, item.Name()), repo); err != nil {
 				logger.Printf("ERROR: could not organize repo '%s': %s", item.Name(), err)
 			} else {
 				logger.Printf("organized repo '%s'", path.Join(dir, item.Name()))
@@ -98,7 +106,9 @@ func run(args *cli.Context) error {
 	config.RemoteStrategy = organize.MultipleRemoteStrategy(args.String("remote-strategy"))
 
 	for _, dir := range args.Args().Slice() {
-		organizeDir(config, dir)
+		if err := organizeDir(config, dir); err != nil {
+			logger.Printf("ERROR: %s", err)
+		}
 	}
 
 	return nil

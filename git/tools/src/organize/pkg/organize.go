@@ -67,7 +67,7 @@ func mapRemotes(remotes []*git.Remote) map[string]*git.Remote {
 	return mapped
 }
 
-func OrganizeRepo(config Config, repoPath string) error {
+func OrganizeRepo(config Config, repoPath string, repo *git.Repository) error {
 	var stagedRepo string
 	if path.IsAbs(config.Stage) {
 		stagedRepo = path.Join(config.Stage, path.Base(repoPath))
@@ -77,11 +77,6 @@ func OrganizeRepo(config Config, repoPath string) error {
 
 	if err := copy.Copy(repoPath, stagedRepo); err != nil {
 		return fmt.Errorf("error staging repo '%s': %w", repoPath, err)
-	}
-
-	repo, err := git.PlainOpen(stagedRepo)
-	if err != nil {
-		return err
 	}
 
 	remotes, err := repo.Remotes()
