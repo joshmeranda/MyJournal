@@ -1,0 +1,6 @@
+tools:
+- path: kubernetes/tools/install_kubectl.sh
+  install: $INSTALLERS/
+configs:
+- path: kubernetes/config/k9s/k9s.yml
+  install: $HOME/.config/k9s/

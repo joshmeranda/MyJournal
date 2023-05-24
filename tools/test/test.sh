@@ -1,5 +1,7 @@
 #!/usr/bin/env sh
 
+# run shunit in docker containers
+
 test_dir="$(dirname "$0")"
 shunit="$test_dir/shunit2"
 
