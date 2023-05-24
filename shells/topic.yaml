@@ -1,0 +1,8 @@
+tools:
+  - path: shells/fish/tools/install_fish.sh
+    install: $INSTALLERS/
+configs:
+  - path: shells/bash/config/.bashrc
+    install: $HOME/
+  - path: shells/fish/config/config.fish
+    install: $HOME/.config/fish/

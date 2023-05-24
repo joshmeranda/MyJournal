@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # this script is intended to install the configurations and tools packaged in
 # config.sh
 
@@ -69,11 +69,13 @@ args:
                 any conflicting values
 "
 
-temp_dir="$(mktemp --directory)"
-config_dir="$temp_dir/myjournal-config"
-config_file="$config_dir/config.json"
+config_dir="$(pwd)"
+config_file="$config_dir/config.yaml"
 
 overwrite=false
+
+TOOLS="$HOME/tools"
+INSTALLERS="$TOOLS/installers"
 
 # install the target ($1) to the destination ($2)
 #
@@ -82,7 +84,11 @@ install_target()
   target="$1"
   target_path="$config_dir/$1"
 
-  destination="$2"
+  destination="$(eval echo "$2")"
+
+  if [ "${destination: -1}" == / ]; then
+    destination="$destination/$(basename $target)"
+  fi
 
   if [ ! -e "$target_path" ]; then
     log_error "no such path '$target_path' exists, skipping target '$target'"
@@ -108,8 +114,6 @@ install_target()
   cp $cp_flags "$target_path" "$destination"
 }
 
-archive=myjournal.tar.gz
-
 while [ $# -gt 0 ]; do
   case "$1" in
     -h)
@@ -134,16 +138,13 @@ else
   cp_flags='--recursive  --no-clobber'
 fi
 
-if [ ! -e "$archive" ]; then
-  log_error "no such archive '$archive' exists"
-elif [ ! -f "$archive" ]; then
-  log_error "specified archive '$archive' must be a file"
-fi
+readarray configs < <(yq eval --output-format json --indent 0 '.configs[]' "$config_file")
+readarray tools < <(yq eval --output-format json --indent 0 '.tools[]' "$config_file")
 
-tar --extract --file "$archive" --directory "$temp_dir"
+for config in "${configs[@]}"; do
+  install_target "configs/$(echo $config | yq eval '.path' -)" "$(echo $config | yq eval '.install' -)"
+done
 
-for target in $(jq keys "$config_file" | jq .[] | tr --delete '"'); do
-  destination=$(eval echo "$(jq ".[\"$target\"]" "$config_file" | tr --delete '"')")
-
-  install_target "$target" "$destination"
+for tool in "${tools[@]}"; do
+  install_target "tools/$(echo $tool | yq eval '.path' -)" "$(echo $tool | yq eval '.install' -)"
 done
