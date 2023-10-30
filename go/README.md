@@ -34,3 +34,24 @@ object file, archive, or executable. Note from the excerpt above that this funct
 and cannot affect `const` values.
 
 For a simple example of this in action, see [./examples/compile-time-value]().
+
+When using a `Makefile` to set version numbers at compile time, I like to use the following snippet to generate a version number:
+
+```make
+TAG:=$(shell git tag --contains HEAD)
+
+ifeq (${TAG},)
+$(info no tag found for HEAD)
+TAG:=$(shell git tag --sort version:refname --list | tail --lines 1)-$(shell git rev-parse HEAD)
+endif
+
+ifneq ($(shell git status --porcelain),)
+$(info HEAD is dirty)
+TAG:=${TAG}-dirty
+endif
+
+$(info using tag ${TAG})
+```
+
+This will generate a version number in the format `<most-recent-tag>[-<commit>][-dirty]` where the commit is only included if the
+tag doesn't point to it, and dirty is included if the git workspace was unclean at compile time.
