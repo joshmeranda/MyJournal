@@ -1,7 +1,5 @@
 #!/usr/bin/env sh
 
-. "$(dirname "$0")/logger.sh"
-
 usage="Usage: $(basename "$0") [-hf] [-s <signal>] <pattern>
 
 opts:
@@ -60,8 +58,7 @@ if [ -z "$processes" ]; then
 	echo 'Error: no processes found, there is nothing to do'
 	exit
 else
-	log_info "found $(echo "$processes" | wc --lines) matching processes"
-	echo "$processes"
+	printf 'found %d matching processes:\n%s\n' "$(echo "$processes" | wc --lines)" "$processes"
 fi
 
 while ! $force; do
@@ -84,9 +81,9 @@ done
 processes="$(echo "$processes" | cut --delimiter ' ' --fields 1)"
 
 # shellcheck disable=SC2086
-log_info killing processes $processes
+printf 'killing processesw %s' "$processes"
 
 # shellcheck disable=SC2086
 kill $kill_flags $processes
 
-log_info 'done'
+printf done
