@@ -4,7 +4,7 @@ usage="Usage: $(basename "$0") [-hf] [-s <signal>] <pattern>
 
 opts:
 	-h          show this help text
-	-f          do not as for confirmation from user before killing processes
+	-f          do not ask for confirmation from user before killing processes
 	-s          the signal to send to the found processes instead of SIGTERM you
 							can get a list of supported signals with 'kill -l'
 "
@@ -52,6 +52,7 @@ while [ "$#" -gt 0 ]; do
 	shift
 done
 
+echo "=== [foff.sh 000] '$0' ==="
 processes="$(pgrep --full --list-full "$pattern" | grep --invert-match "$0")"
 
 if [ -z "$processes" ]; then
@@ -81,9 +82,9 @@ done
 processes="$(echo "$processes" | cut --delimiter ' ' --fields 1)"
 
 # shellcheck disable=SC2086
-printf 'killing processesw %s' "$processes"
+#printf 'killing processes %s\n' "$processes"
 
 # shellcheck disable=SC2086
-kill $kill_flags $processes
+#kill $kill_flags $processes
 
-printf done
+#printf done
