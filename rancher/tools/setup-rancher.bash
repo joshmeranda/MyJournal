@@ -5,7 +5,7 @@
 
 rancher_run_mode=binary
 
-helm_values_flags='--set hostname=rancher.local.com --set rancherImage=joshmeranda/rancher --set rancherImageTag=dev-head'
+helm_values_flags='--set bootstrapPassword=password12345 --set hostname=rancher.local.com --set rancherImage=joshmeranda/rancher --set rancherImageTag=dev-head'
 
 cluster_prefix=rancher
 
@@ -34,7 +34,7 @@ while [[ $# -gt 0 ]]; do
 			rancher_run_mode="$2"
 			shift
 			;;
-		
+
 		--chart | -c )
 			if [ $# -lt 2 ]; then
 				echo "expected value after '$1' but found none"
