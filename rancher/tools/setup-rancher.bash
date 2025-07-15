@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Script for establishing a local rancher setup using k3d as a driver. When creating a server, the file pointed to by
-# your 'KUBECONFIG' envvar will be updated. When creating agents a new KUBECONFIG file will be created in your cwd of
-# the name <cluster name>.yaml.
+# your 'KUBECONFIG' envvar will be updated. When creating agents a new KUBECONFIG file will be created with the name
+# ./<cluster name>.yaml.
 
 rancher_run_mode=binary
 
@@ -69,7 +69,7 @@ while [[ $# -gt 0 ]]; do
 			agents=$2
 			shift
 			;;
-		
+
 		--image | -i )
 			if [ $# -lt 2 ]; then
 				echo "expected value after '$1' but found none"
@@ -100,7 +100,7 @@ Args
 
 		* )
 			echo "Unrecognized flag '$1', run '$(basename $0) --help' for more information"
-			exit 1	
+			exit 1
 			;;
 	esac
 
@@ -130,6 +130,7 @@ create_server() {
 	fi
 
 	k3d cluster create $args "$cluster_prefix"-server
+	kubectl config set-context --current --namespace cattle-system
 
 	new_clusters+=($cluster_prefix-server)
 }
