@@ -149,6 +149,8 @@ create_agent() {
 	fi
 
 	KUBECONFIG=$name.yaml k3d cluster create $args $name
+	KUBECONFIG=$name.yaml kubectl config set-context --current --namespace cattle-system
+
 	new_clusters+=($name)
 }
 
