@@ -45,6 +45,16 @@ while [[ $# -gt 0 ]]; do
 			shift
 			;;
 
+		--set | -s )
+			if [ $# -lt 2 ]; then
+				echo "expected value after '$1' but found none"
+				exit 1
+			fi
+
+			helm_values_flags="$helm_values_flags --set $2"
+			shift
+			;;
+
 		--prefix | -p )
 			if [ $# -lt 2 ]; then
 				echo "expected value after '$1' but found none"
@@ -90,6 +100,7 @@ while [[ $# -gt 0 ]]; do
 Args
   --mode, -m <str>     The mode rancher is expected to be run as. Can be one of chart, docker, or binary. [$rancher_run_mode]
   --chart, -c <ref>    The reference to the chart to install when mode == \'chart\', see https://v2.helm.sh/docs/helm/#helm-install for more information on chart references
+  --set, -s <str>      See https://helm.sh/docs/helm/helm_upgrade for more information on the format for --set
   --prefix, -p <str>   The prefix to use when generating cluster names. [$cluster_prefix]
   --agents, -a  <int>  Specify how many rancher agent clusters to start [$agents]
   --image, -i <image>  The image to use when creating clusters, if not specified the default k3d vlaue is used
