@@ -162,7 +162,11 @@ create_server
 
 case "$rancher_run_mode" in
 	chart)
-		helm upgrade --install --create-namespace --namespace cert-manager --set installCRDs=true cert-manager jetstack/cert-manager
+		if [ "$(helm search repo jetstack/cert-manager -o json | jq length)" -lt 1 ]; then
+			helm repo add --force-update jetstack https://charts.jetstack.io
+		fi
+
+		helm upgrade --install --create-namespace --namespace cert-manager --set crds.enabled=true cert-manager jetstack/cert-manager
 
 		if [ -n "$rancher_chart" ]; then
 			helm upgrade --install --create-namespace --namespace cattle-system rancher "$rancher_chart" $helm_values_flags
