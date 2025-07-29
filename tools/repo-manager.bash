@@ -18,6 +18,25 @@ SSH_USER:        $SSH_USER
 REPO_ROOT:       $REPO_ROOT"
 }
 
+# for_each_repo is an iterato over each repository managed by this script. Expects an argument containing a command to
+# be run. The command will be passed the repo dir ($1), the owner ($2), and the repo name ($3).
+#
+# If a directory under REPO_ROOT does not contain a '.git' repo it will be ignored.
+for_each_repo() {
+	local owner_dir
+	local repo_dir
+
+	for owner_dir in $REPO_ROOT/*; do
+		for repo_dir in $owner_dir/*; do
+			if ! [ -d "$repo_dir/.git" ]; then
+				continue
+			fi
+
+			$1 $repo_dir "$(basename $owner_dir)" "$(basename $repo_dir)"
+		done
+	done
+}
+
 clone() {
 	local https=true
 	local ssh=false
@@ -147,44 +166,48 @@ Args:
 		shift
 	done
 
-	local answer
+	clean_each() {
+		local repo_dir="$1"
+		local owner="$2"
+		local repo="$3"
 
-	for owner_dir in $REPO_ROOT/*; do
-		for repo_dir in $owner_dir/*; do
-			if [ -z "$(find $repo_dir -mtime "-$after")" ]; then
-				if $force; then
-					answer=Y
-				fi
+		local answer=""
 
-				until [[ $answer =~ [ynYN] ]]; do
-					read -n 1 -p "delete '$repo_dir'? [N|y]" answer 
-					
-					if [ -z $answer ]; then
-						answer=N
-					fi
-
-					echo $answer
-				done
-
-				if [[ $answer =~ [yY] ]]; then
-					pushd "$repo_dir"
-					if [ -z "$(git status --porcelain)" ]; then
-						popd
-						continue
-					fi
-					popd
-
-					rm --recursive --force "$repo_dir"
-				fi
-
-				answer=""
+		if [ -z "$(find $repo_dir -mtime "-$after")" ]; then
+			if $force; then
+				answer=Y
 			fi
-		done
 
-		if [ -z "$(ls -A $owner_dir)" ]; then
+			until [[ $answer =~ [ynYN] ]]; do
+				read -n 1 -p "delete '$repo_dir'? [N|y]" answer
+
+				if [ -z $answer ]; then
+					answer=N
+				fi
+
+				echo $answer
+			done
+
+			if [[ $answer =~ [yY] ]]; then
+				pushd "$repo_dir"
+				if [ -z "$(git status --porcelain)" ]; then
+					popd
+					continue
+				fi
+				popd
+
+				rm --recursive --force "$repo_dir"
+			fi
+
+			answer=""
+		fi
+
+		if [ -z "$(ls -A $(dirname $1))" ]; then
 			rm --recursive --force "$owner_dir"
 		fi
-	done
+	}
+
+	for_each_repo clean_each
 }
 
 list() {
@@ -197,25 +220,25 @@ list() {
 	local origin
 	local upstream
 
-	for owner_dir in $REPO_ROOT/*; do
-		for repo_dir in $owner_dir/*; do
-			pushd $repo_dir &> /dev/null
+	list_each() {
+		pushd $repo_dir &> /dev/null
 
-			origin="$(git remote get-url origin 2> /dev/null)"
-			if [ $? -ne 0 ]; then
-				origin=""
-			fi
+		origin="$(git remote get-url origin 2> /dev/null)"
+		if [ $? -ne 0 ]; then
+			origin=""
+		fi
 
-			upstream="$(git remote get-url upstream 2> /dev/null)"
-			if [ $? -ne 0 ]; then
-				upstream=""
-			fi
+		upstream="$(git remote get-url upstream 2> /dev/null)"
+		if [ $? -ne 0 ]; then
+			upstream=""
+		fi
 
-			printf "$format_str" "$(basename $owner_dir)/$(basename $repo_dir)" $origin $upstream
+		printf "$format_str" "$(basename $owner_dir)/$(basename $repo_dir)" $origin $upstream
 
-			popd &> /dev/null
-		done
-	done
+		popd &> /dev/null
+	}
+
+	for_each_repo list_each
 }
 
 while [ $# -gt 0 ]; do
