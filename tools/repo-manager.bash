@@ -18,9 +18,6 @@ SSH_USER:        $SSH_USER
 REPO_ROOT:       $REPO_ROOT"
 }
 
-# todo: list (with age)
-# todo: clean (most untouched)
-
 clone() {
 	local https=true
 	local ssh=false
@@ -190,6 +187,37 @@ Args:
 	done
 }
 
+list() {
+	local column_length=35
+	local url_column_length=50
+	local format_str="%-${column_length}s%-${url_column_length}s%-${url_column_length}s\n"
+
+	printf "$format_str" owner/repo origin upstream
+
+	local origin
+	local upstream
+
+	for owner_dir in $REPO_ROOT/*; do
+		for repo_dir in $owner_dir/*; do
+			pushd $repo_dir &> /dev/null
+
+			origin="$(git remote get-url origin 2> /dev/null)"
+			if [ $? -ne 0 ]; then
+				origin=""
+			fi
+
+			upstream="$(git remote get-url upstream 2> /dev/null)"
+			if [ $? -ne 0 ]; then
+				upstream=""
+			fi
+
+			printf "$format_str" "$(basename $owner_dir)/$(basename $repo_dir)" $origin $upstream
+
+			popd &> /dev/null
+		done
+	done
+}
+
 while [ $# -gt 0 ]; do
 	case "$1" in
 		clone )
@@ -201,6 +229,12 @@ while [ $# -gt 0 ]; do
 		clean )
 			shift
 			clean $*
+			break
+			;;
+		
+		list )
+			shift
+			list
 			break
 			;;
 
