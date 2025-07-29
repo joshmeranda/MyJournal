@@ -170,6 +170,13 @@ Args:
 				done
 
 				if [[ $answer =~ [yY] ]]; then
+					pushd "$repo_dir"
+					if [ -z "$(git status --porcelain)" ]; then
+						popd
+						continue
+					fi
+					popd
+
 					rm --recursive --force "$repo_dir"
 				fi
 
